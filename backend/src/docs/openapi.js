@@ -6,6 +6,7 @@ const openApiDocument = {
     description: 'Backend API for IELTS Buddy authentication, mock attempts, practice tests, AI feedback previews, onboarding survey, and history.',
   },
   servers: [
+    { url: 'https://ielts-jt4m.onrender.com/api', description: 'Production API' },
     { url: 'http://localhost:5000/api', description: 'Local development API' },
   ],
   tags: [
