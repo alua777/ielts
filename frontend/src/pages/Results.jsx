@@ -1,17 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, Check, Download, X } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, Download } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
 import DashboardSidebar from '../components/dashboard/DashboardSidebar';
 import FeedbackCard from '../components/results/FeedbackCard';
 import PerformanceCard from '../components/results/PerformanceCard';
 import QuickStatsCard from '../components/results/QuickStatsCard';
 import ResultsOverview from '../components/results/ResultsOverview';
-import ResultsPanel from '../components/results/ResultsPanel';
 import ResultsTrendCard from '../components/results/ResultsTrendCard';
 import SectionScoresCard from '../components/results/SectionScoresCard';
 import StrengthsCard from '../components/results/StrengthsCard';
 import { useAuth } from '../context/AuthContext';
 import { useExam } from '../context/ExamContext';
+import ResultsSkeleton from '../components/skeletons/ResultsSkeleton';
+import ErrorState from '../components/ui/ErrorState';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -51,12 +52,13 @@ export default function Results() {
   const { token, logout } = useAuth();
   const { attemptId, startExam } = useExam();
   const navigate = useNavigate();
+  const { attemptParam } = useParams();
   const [attempts, setAttempts] = useState([]);
   const [result, setResult] = useState(null);
   const [answers, setAnswers] = useState([]);
+  const [mockFeedback, setMockFeedback] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showReview, setShowReview] = useState(false);
 
   useEffect(() => {
     if (!token) return;
@@ -66,7 +68,7 @@ export default function Results() {
       .then(response => response.json())
       .then(async data => {
         const history = data.attempts || [];
-        const selectedId = attemptId || history.find(item => item.status === 'completed')?.id || history[0]?.id;
+        const selectedId = attemptParam || attemptId || history.find(item => item.status === 'completed')?.id || history[0]?.id;
         setAttempts(history);
         if (!selectedId) throw new Error('No results found.');
 
@@ -75,10 +77,11 @@ export default function Results() {
         if (!response.ok) throw new Error(detail.error || 'Failed to load results.');
         setResult(detail.attempt);
         setAnswers(detail.answers || []);
+        setMockFeedback(detail.mock_feedback || null);
       })
       .catch(fetchError => setError(fetchError.message || 'Failed to load results.'))
       .finally(() => setLoading(false));
-  }, [attemptId, token]);
+  }, [attemptId, attemptParam, token]);
 
   const gradedAnswers = useMemo(
     () => answers.filter(answer => answer.is_correct !== null && answer.is_correct !== undefined),
@@ -107,8 +110,8 @@ export default function Results() {
   const scores = {
     reading: sectionRows[0]?.band || overallBand,
     listening: sectionRows[1]?.band || overallBand,
-    writing: 6,
-    speaking: 6,
+    writing: Number(mockFeedback?.writing?.overall_band || 6),
+    speaking: Number(mockFeedback?.speaking?.overall_band || 6),
   };
 
   const completedAttempts = attempts.filter(item => item.status === 'completed');
@@ -128,20 +131,11 @@ export default function Results() {
   };
 
   if (loading) {
-    return <div className="grid min-h-dvh place-items-center bg-slate-50 text-[13px] font-semibold text-violet-600">Loading results...</div>;
+    return <ResultsSkeleton />;
   }
 
   if (error) {
-    return (
-      <div className="grid min-h-dvh place-items-center bg-slate-50">
-        <div className="text-center">
-          <p className="text-[14px] font-semibold text-red-500">{error}</p>
-          <button onClick={() => navigate('/dashboard')} className="mt-4 rounded-lg bg-violet-600 px-5 py-2 text-[13px] font-bold text-white">
-            Back to Dashboard
-          </button>
-        </div>
-      </div>
-    );
+    return <ErrorState message={error} onRetry={() => navigate('/dashboard')} />;
   }
 
   return (
@@ -153,9 +147,9 @@ export default function Results() {
         onNavigate={navigate}
       />
 
-      <main className="min-w-0 flex-1 overflow-y-auto px-5 py-4">
-        <div className="mx-auto max-w-[1480px]">
-          <div className="mb-4 flex items-end justify-between">
+      <main className="min-w-0 flex-1 overflow-y-auto px-4 pb-6 pt-20 sm:px-6 lg:px-5 lg:py-4">
+        <div className="mx-auto">
+          <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <button
                 type="button"
@@ -170,18 +164,18 @@ export default function Results() {
               </p>
             </div>
 
-            <div className="flex gap-3">
+            <div className="grid grid-cols-2 gap-2 sm:flex sm:gap-3">
               <button
                 type="button"
                 onClick={() => window.print()}
-                className="flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-5 text-[13px] font-bold text-violet-700"
+                className="flex min-h-11 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-[12px] font-bold text-violet-700 sm:px-5 sm:text-[13px]"
               >
                 <Download size={16} /> Download Report
               </button>
               <button
                 type="button"
-                onClick={() => setShowReview(value => !value)}
-                className="h-10 rounded-lg border-0 bg-violet-600 px-5 text-[13px] font-bold text-white hover:bg-violet-700"
+                onClick={() => navigate(`/review-answers?attempt=${result?.id}`)}
+                className="min-h-11 rounded-lg border-0 bg-violet-600 px-3 text-[12px] font-bold text-white hover:bg-violet-700 sm:px-5 sm:text-[13px]"
               >
                 Review Answers
               </button>
@@ -198,12 +192,16 @@ export default function Results() {
               total={totalGraded}
             />
 
-            <div className="grid grid-cols-[1.15fr_1.05fr_0.9fr] gap-3">
+            <div className="grid grid-cols-1 gap-3 xl:grid-cols-[1.15fr_1.05fr_0.9fr]">
               <SectionScoresCard scores={scores} />
               <ResultsTrendCard values={trendValues} />
               <StrengthsCard accuracy={accuracy} />
               <PerformanceCard sectionRows={sectionRows} />
-              <FeedbackCard writingScore={scores.writing} speakingScore={scores.speaking} />
+              <FeedbackCard
+                writingScore={scores.writing}
+                speakingScore={scores.speaking}
+                onViewFeedback={() => navigate(`/review-answers?attempt=${result?.id}&section=writing`)}
+              />
               <QuickStatsCard
                 averageTime={averageTime}
                 attemptsCount={completedAttempts.length}
@@ -212,31 +210,7 @@ export default function Results() {
               />
             </div>
 
-            {showReview && (
-              <ResultsPanel title={`Answer Review (${totalGraded} graded)`}>
-                <div className="grid grid-cols-2 gap-3">
-                  {gradedAnswers.map((answer, index) => {
-                    const correct = answer.is_correct === 1 || answer.is_correct === true;
-                    return (
-                      <div key={answer.id || index} className={`flex gap-3 rounded-lg border p-3 ${correct ? 'border-emerald-100 bg-emerald-50' : 'border-red-100 bg-red-50'}`}>
-                        {correct
-                          ? <Check size={16} className="mt-0.5 shrink-0 text-emerald-600" />
-                          : <X size={16} className="mt-0.5 shrink-0 text-red-500" />}
-                        <div>
-                          <p className="text-[12px] leading-5 text-slate-700">{answer.question_text}</p>
-                          <p className="mt-1 text-[11px] font-semibold text-slate-500">
-                            Your answer: {answer.user_answer || 'No answer'}
-                            {!correct && answer.correct_answer ? ` · Correct: ${answer.correct_answer}` : ''}
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </ResultsPanel>
-            )}
-
-            <div className="flex items-center justify-between rounded-lg border border-violet-100 bg-violet-50 px-5 py-4">
+            <div className="flex flex-col gap-4 rounded-lg border border-violet-100 bg-violet-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-[13px] font-bold text-slate-900">Keep the momentum going!</p>
                 <p className="mt-1 text-[11px] text-slate-600">Consistent practice is the key to reaching your target band.</p>

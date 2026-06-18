@@ -11,7 +11,7 @@ export default function ResultsTrendCard({ values }) {
   const path = coords.map(([x, y], index) => `${index ? 'L' : 'M'} ${x} ${y}`).join(' ');
 
   return (
-    <ResultsPanel title="Band Score Trend" className="h-[292px]">
+    <ResultsPanel title="Band Score Trend" className="min-h-[292px]">
       <div className="relative pt-2">
         <div className="absolute inset-x-0 top-4 flex h-[145px] flex-col justify-between">
           {[8, 7, 6, 5].map(value => <div key={value} className="border-t border-dashed border-slate-200" />)}
@@ -20,7 +20,7 @@ export default function ResultsTrendCard({ values }) {
           <path d={path} fill="none" stroke="#6d4aff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
           {coords.map(([x, y], index) => <circle key={index} cx={x} cy={y} r="4" fill="#6d4aff" />)}
         </svg>
-        <div className="flex justify-between text-[11px] font-medium text-slate-500">
+        <div className="flex justify-between overflow-hidden text-[10px] font-medium text-slate-500 sm:text-[11px]">
           {points.map((_, index) => <span key={index}>Mock {index + 1}</span>)}
         </div>
       </div>

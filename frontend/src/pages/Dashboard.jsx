@@ -14,6 +14,9 @@ import MomentumCard from '../components/dashboard/MomentumCard';
 import { clampBand, DASHBOARD_SKILLS } from '../components/dashboard/dashboardConfig';
 import { useAuth } from '../context/AuthContext';
 import { useExam } from '../context/ExamContext';
+import DashboardSkeleton from '../components/skeletons/DashboardSkeleton';
+import ErrorState from '../components/ui/ErrorState';
+import NewUserDashboard from '../components/dashboard/NewUserDashboard';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -22,15 +25,31 @@ export default function Dashboard() {
   const { startExam } = useExam();
   const navigate = useNavigate();
   const [attempts, setAttempts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [survey, setSurvey] = useState(null);
   const [now] = useState(() => Date.now());
 
   useEffect(() => {
     if (!token) return;
-    fetch(`${API}/attempts`, { headers: { Authorization: `Bearer ${token}` } })
-      .then(response => response.json())
-      .then(data => setAttempts(data.attempts || []))
-      .catch(() => setAttempts([]));
-  }, [token]);
+    const headers = { Authorization: `Bearer ${token}` };
+    Promise.all([
+      fetch(`${API}/attempts`, { headers }).then(async response => {
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Failed to load dashboard.');
+        return data;
+      }),
+      user?.id
+        ? fetch(`${API}/onboarding-survey/${user.id}`, { headers }).then(response => response.json()).catch(() => ({ survey: null }))
+        : Promise.resolve({ survey: null }),
+    ])
+      .then(([attemptData, surveyData]) => {
+        setAttempts(attemptData.attempts || []);
+        setSurvey(surveyData.survey || null);
+      })
+      .catch(fetchError => setError(fetchError.message))
+      .finally(() => setLoading(false));
+  }, [token, user?.id]);
 
   const completed = useMemo(
     () => attempts.filter(attempt => attempt.status === 'completed'),
@@ -77,7 +96,7 @@ export default function Dashboard() {
         onNavigate={navigate}
       />
 
-      <main className="min-w-0 flex-1 overflow-y-auto px-4 py-4 lg:overflow-hidden lg:px-6">
+      <main className="min-w-0 flex-1 overflow-y-auto px-4 pb-6 pt-20 sm:px-6 lg:overflow-hidden lg:px-6 lg:py-4">
         <DashboardHeader
           firstName={firstName}
           user={user}
@@ -88,10 +107,20 @@ export default function Dashboard() {
           onLogout={handleLogout}
         />
 
-        <div className="grid grid-cols-1 gap-3 xl:grid-cols-[1.02fr_1.02fr_1.28fr]">
+        {loading ? <DashboardSkeleton /> : error ? (
+          <ErrorState compact message={error} onRetry={() => window.location.reload()} />
+        ) : completed.length === 0 ? (
+          <NewUserDashboard
+            survey={survey}
+            onStartExam={() => startExam('reading')}
+            onPractice={() => navigate(survey?.weak_sections?.[0] ? `/practice/${survey.weak_sections[0]}` : '/practice')}
+            onSurvey={() => navigate('/onboarding')}
+          />
+        ) : <div className="grid grid-cols-1 gap-3 xl:grid-cols-[1.02fr_1.02fr_1.28fr]">
           <OverallBandCard averageBand={averageBand} targetBand={targetBand} />
-          <TodayPlanCard weeklyDone={weeklyDone} onContinue={() => startExam('reading')} />
+
           <SkillsBreakdownCard skills={skillScores} />
+          <TodayPlanCard weeklyDone={weeklyDone} onContinue={() => startExam('reading')} />
           <WeakAreasCard />
           <BandTrendCard values={trendValues} />
           <LatestFeedbackCard averageBand={averageBand} />
@@ -102,7 +131,7 @@ export default function Dashboard() {
             completed={completed.length}
             weekly={weeklyDone}
           />
-        </div>
+        </div>}
       </main>
     </div>
   );

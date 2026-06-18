@@ -7,7 +7,8 @@
     "dev": "node --watch src/index.js",
     "db:up": "docker compose -f ../docker-compose.yml up -d postgres",
     "db:down": "docker compose -f ../docker-compose.yml down",
-    "seed": "node seed.js"
+    "seed": "node seed.js",
+    "seed:practice": "node seed-practice.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -17,6 +18,7 @@
     "jsonwebtoken": "^9.0.0",
     "multer": "^2.0.0",
     "pg": "^8.12.0",
+    "swagger-ui-express": "^5.0.1",
     "uuid": "^9.0.0"
   }
 }

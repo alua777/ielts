@@ -94,7 +94,7 @@ export function ExamProvider({ children }) {
   }, [token]);
 
   // ── Navigate to a stage ───────────────────────────────────────
-  const goToStage = useCallback((newStage, id) => {
+  const goToStage = useCallback((newStage) => {
     setStage(newStage);
     setPart(1);
     setPassageIndex(0); 
@@ -201,7 +201,7 @@ export function ExamProvider({ children }) {
       setAnswers({});
       setPassageIndex(0);
       setTotalPassages(1);
-      navigate('/');
+      navigate('/dashboard');
     }
   }, [attemptId, navigate, token]);
 

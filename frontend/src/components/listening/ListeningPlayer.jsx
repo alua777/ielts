@@ -11,7 +11,6 @@ function formatTime(value) {
 export default function ListeningPlayer({ audioUrl }) {
   const audioRef = useRef(null);
   const [playing, setPlaying] = useState(false);
-  const [ended, setEnded] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
 
@@ -30,9 +29,9 @@ export default function ListeningPlayer({ audioUrl }) {
   const progress = duration > 0 ? Math.min((currentTime / duration) * 100, 100) : 0;
 
   return (
-    <section className="relative h-32 shrink-0 border-b border-slate-200 bg-white px-6">
+    <section className="sticky top-0 z-20 h-28 shrink-0 border-b border-slate-200 bg-white px-4 sm:h-32 sm:px-6">
       <div className="mx-auto flex h-full max-w-[1500px] items-center justify-end">
-        <div className="absolute left-1/2 top-1/2 flex w-[min(620px,48vw)] -translate-x-1/2 -translate-y-1/2 flex-col items-center">
+        <div className="absolute left-1/2 top-1/2 flex w-[calc(100%-32px)] max-w-[620px] -translate-x-1/2 -translate-y-1/2 flex-col items-center sm:w-[min(620px,72vw)] lg:w-[min(620px,48vw)]">
           <button
             type="button"
             onClick={togglePlayback}
@@ -69,12 +68,10 @@ export default function ListeningPlayer({ audioUrl }) {
         onTimeUpdate={event => setCurrentTime(event.currentTarget.currentTime)}
         onPlay={() => {
           setPlaying(true);
-          setEnded(false);
         }}
         onPause={() => setPlaying(false)}
         onEnded={() => {
           setPlaying(false);
-          setEnded(true);
           setCurrentTime(audioRef.current?.duration || 0);
         }}
       />

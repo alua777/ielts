@@ -4,35 +4,53 @@ Full-stack IELTS practice application built with React, Express, and PostgreSQL.
 
 ## Requirements
 
-- Node.js
+- Node.js 20+
 - Docker Desktop
+- npm
 
 ## Setup
 
-1. Copy `backend/.env.example` to `backend/.env`.
-2. Create `frontend/.env` containing:
+1. Copy the environment examples:
+
+```powershell
+Copy-Item backend/.env.example backend/.env
+Copy-Item frontend/.env.example frontend/.env
+```
+
+Backend variables:
+
+```env
+PORT=5000
+NODE_ENV=development
+JWT_SECRET=change_this_to_a_long_random_secret_string
+DATABASE_URL=postgres://ielts:ielts@127.0.0.1:5433/ielts
+ADMIN_EMAILS=admin@example.com
+```
+
+Frontend variables:
 
 ```env
 VITE_API_URL=http://localhost:5000/api
 ```
 
-3. Start PostgreSQL:
+2. Start PostgreSQL:
 
 ```powershell
 cd backend
 npm run db:up
 ```
 
-4. Install and seed the backend:
+3. Install and seed the backend:
 
 ```powershell
 cd backend
 npm install
 npm run seed
+npm run seed:practice
 npm run dev
 ```
 
-5. Start the frontend in another terminal:
+4. Start the frontend in another terminal:
 
 ```powershell
 cd frontend
@@ -41,3 +59,42 @@ npm run dev
 ```
 
 The frontend runs at `http://localhost:5173` and the API at `http://localhost:5000`.
+
+## Useful Routes
+
+- Landing page: `http://localhost:5173/`
+- Dashboard: `http://localhost:5173/dashboard`
+- Practice library: `http://localhost:5173/practice`
+- History: `http://localhost:5173/history`
+- Admin panel: `http://localhost:5173/admin`
+- Onboarding survey: `http://localhost:5173/onboarding`
+- Swagger API docs: `http://localhost:5000/api/docs`
+
+## API Notes
+
+- Auth: `/api/auth/register`, `/api/auth/login`, `/api/auth/me`
+- Survey: `POST /api/onboarding-survey`, `GET /api/onboarding-survey/:userId`
+- Practice tests: `/api/practice-tests`
+- Admin: `/api/admin/summary`, `/api/admin/practice-tests`, `/api/admin/users`
+- History: `/api/history`
+- OpenAPI JSON: `/api/openapi.json`
+
+## Admin Panel
+
+Set `ADMIN_EMAILS` in `backend/.env` to the email address you use to log in, then restart the backend and log in again. Admin users can open `http://localhost:5173/admin` to:
+
+- Create, edit, delete, publish, and unpublish practice tests.
+- Upload listening audio files into `backend/uploads/listening`.
+- Manage writing prompts and speaking questions through each test's JSON content.
+- View users, ban/unban them, delete accounts, or reset attempts and feedback.
+- See analytics for total users, active users, published tests, attempts, feedback, and difficult question types.
+
+## Testing APIs With Swagger
+
+1. Start the backend with `npm run dev`.
+2. Open `http://localhost:5000/api/docs`.
+3. Use `POST /auth/login` or `POST /auth/register` to get a JWT token.
+4. Click **Authorize** in Swagger and paste the token.
+5. Use **Try it out** on protected routes such as `/practice-tests`, `/history`, `/ai-check/writing`, or `/attempts`.
+
+Run `npm run seed:practice` whenever you want to refresh the expanded practice library and full mock-test catalog without deleting users or attempts.

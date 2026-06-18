@@ -3,6 +3,7 @@ import { AlertTriangle, ArrowRight, CheckCircle2, FilePenLine, Info } from 'luci
 import { useAuth } from '../context/AuthContext';
 import { useExam } from '../context/ExamContext';
 import { ExamError, ExamLoader } from '../components/exam/ExamLoader';
+import AssessmentCriteria from '../components/exam/AssessmentCriteria';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -61,14 +62,14 @@ export default function Writing() {
 
   return (
     <div className="flex h-[calc(100dvh-64px)] flex-col overflow-hidden bg-slate-50">
-      <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 py-3">
+      <div className="flex shrink-0 items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 py-3 sm:px-6">
         <div className="inline-flex gap-1 rounded-lg bg-slate-100 p-1">
           {tasks.map((_, index) => (
             <button
               key={index}
               type="button"
               onClick={() => setPassageIndex(index)}
-              className={`h-9 rounded-md border-0 px-5 text-[13px] font-bold transition ${
+            className={`min-h-11 rounded-md border-0 px-3 text-[12px] font-bold transition sm:px-5 sm:text-[13px] ${
                 currentIndex === index
                   ? 'bg-white text-slate-950 shadow-sm'
                   : 'bg-transparent text-slate-500 hover:text-slate-800'
@@ -100,9 +101,9 @@ export default function Writing() {
         </div>
       </div>
 
-      <div className="grid min-h-0 flex-1 grid-cols-[0.9fr_1.1fr] gap-4 px-6 py-4">
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 overflow-y-auto px-4 py-3 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:overflow-hidden lg:py-4">
         <section className="min-h-0 overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-          <div className="p-8">
+          <div className="p-5 sm:p-8">
             <p className="mb-2 text-[11px] font-bold uppercase text-violet-600">
               Writing Task {currentIndex + 1}
             </p>
@@ -131,6 +132,8 @@ export default function Writing() {
               </p>
             </div>
 
+            <AssessmentCriteria className="mt-7" />
+
             {isTaskOne && (
               <div className="mt-7 flex min-h-52 items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 px-6 text-center">
                 <p className="text-[12px] font-semibold text-slate-400">
@@ -141,7 +144,7 @@ export default function Writing() {
           </div>
         </section>
 
-        <section className="flex min-h-0 flex-col rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <section className="flex min-h-[65vh] flex-col rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
           <div className="mb-4">
             <div className="mb-3 flex items-center justify-between">
               <div>
@@ -173,7 +176,7 @@ export default function Writing() {
             className="min-h-0 flex-1 resize-none rounded-lg border border-slate-200 bg-slate-50 p-5 text-[15px] leading-7 text-slate-800 outline-none transition focus:border-violet-400 focus:bg-white focus:ring-2 focus:ring-violet-100"
           />
 
-          <div className="mt-4 border-t border-slate-100 pt-4">
+          <div className="sticky bottom-0 mt-4 border-t border-slate-100 bg-white pt-4">
             {wordCount < minimumWords && (
               <p className="mb-3 flex items-center justify-center gap-2 text-[12px] font-semibold text-amber-600">
                 <AlertTriangle size={14} />

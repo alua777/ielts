@@ -4,6 +4,7 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const { all, get, run } = require('../db/database');
 const auth = require('../middleware/auth');
+const { buildMockExamFeedback } = require('../utils/mockExamFeedback');
 
 const router = express.Router();
 
@@ -90,7 +91,8 @@ router.get('/:id', auth, async (req, res) => {
     if (!attempt) return res.status(404).json({ error: 'Attempt not found' });
 
     const answers = await all(
-     `SELECT a.*, q.question_text, q.correct_answer, p.section
+     `SELECT a.*, q.question_text, q.correct_answer, p.section,
+       p.title AS passage_title, qg.instruction
  FROM answers a
  JOIN questions q ON a.question_id = q.id
  JOIN question_groups qg ON q.group_id = qg.id
@@ -99,7 +101,33 @@ router.get('/:id', auth, async (req, res) => {
       [req.params.id]
     );
 
-    res.json({ attempt, answers });
+    const writingSubmissions = answers
+      .filter(answer => answer.section === 'writing' && answer.user_answer?.trim())
+      .map(answer => ({
+        id: answer.id,
+        question_id: answer.question_id,
+        question_text: answer.question_text,
+        essay_text: answer.user_answer,
+        passage_title: answer.passage_title,
+        task_type: answer.passage_title?.toLowerCase().includes('task 1') ? 'task1' : 'task2',
+      }));
+    const speakingSubmissions = await all(
+      `SELECT ss.*, p.title AS passage_title
+       FROM speaking_submissions ss
+       LEFT JOIN passages p ON p.id = ss.passage_id
+       WHERE ss.attempt_id = ?
+       ORDER BY ss.part_index`,
+      [req.params.id]
+    );
+    const mockFeedback = buildMockExamFeedback(writingSubmissions, speakingSubmissions);
+
+    res.json({
+      attempt,
+      answers,
+      writing_submissions: mockFeedback.writing.submissions,
+      speaking_submissions: speakingSubmissions,
+      mock_feedback: mockFeedback,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -133,7 +161,12 @@ router.post('/:id/answers', auth, async (req, res) => {
       let is_correct = null;
       let score = 0;
       if (question.question_type !== 'essay' && question.correct_answer) {
-        is_correct = user_answer?.trim().toLowerCase() === question.correct_answer.trim().toLowerCase() ? 1 : 0;
+        const submitted = user_answer?.trim().toLowerCase() || '';
+        const expected = question.correct_answer.trim().toLowerCase();
+        const normalizedSubmitted = question.question_type === 'mcq' && /^[a-z][.)]\s/.test(submitted)
+          ? submitted[0]
+          : submitted;
+        is_correct = normalizedSubmitted === expected ? 1 : 0;
         score = is_correct ? 1 : 0;
       }
 

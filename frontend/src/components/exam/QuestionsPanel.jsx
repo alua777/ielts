@@ -12,8 +12,8 @@ export default function QuestionsPanel({
   onNextPassageLabel = 'Next Passage',
 }) {
   return (
-    <div className="bg-white rounded-2xl overflow-y-auto flex flex-col" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-      <div className="p-8 flex-1">
+    <div className="flex h-full flex-col overflow-y-auto rounded-lg bg-white" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+      <div className="flex-1 p-4 sm:p-8">
         {groups.map(group => (
           <QuestionGroup
             key={group.id}
@@ -24,7 +24,7 @@ export default function QuestionsPanel({
         ))}
       </div>
 
-      <div className="px-8 py-5 border-t border-gray-100 shrink-0">
+      <div className="sticky bottom-0 shrink-0 border-t border-gray-100 bg-white px-4 py-4 sm:px-8 sm:py-5">
         {isLastPassage ? (
           <button
             onClick={onNext}

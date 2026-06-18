@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 const { get, run } = require('../db/database');
+const { resolveRole } = require('../utils/admin');
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'ielts_secret_key_change_in_production';
@@ -24,18 +25,19 @@ router.post('/register', async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const id = uuidv4();
+    const role = resolveRole(email);
 
     await run(
-      'INSERT INTO users (id, name, email, password) VALUES (?, ?, ?, ?)',
-      [id, name, email, hashedPassword]
+      'INSERT INTO users (id, name, email, password, role) VALUES (?, ?, ?, ?, ?)',
+      [id, name, email, hashedPassword, role]
     );
 
-    const token = jwt.sign({ id, name, email }, JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign({ id, name, email, role }, JWT_SECRET, { expiresIn: '7d' });
 
     res.status(201).json({
       message: 'Account created successfully',
       token,
-      user: { id, name, email },
+      user: { id, name, email, role, status: 'active' },
     });
   } catch (err) {
     res.status(500).json({ error: 'Server error: ' + err.message });
@@ -53,13 +55,16 @@ router.post('/login', async (req, res) => {
     const user = await get('SELECT * FROM users WHERE email = ?', [email]);
     if (!user)
       return res.status(401).json({ error: 'Invalid email or password' });
+    if (user.status === 'banned')
+      return res.status(403).json({ error: 'This account has been banned' });
 
     const valid = await bcrypt.compare(password, user.password);
     if (!valid)
       return res.status(401).json({ error: 'Invalid email or password' });
 
+    const role = resolveRole(user.email, user.role);
     const token = jwt.sign(
-      { id: user.id, name: user.name, email: user.email },
+      { id: user.id, name: user.name, email: user.email, role },
       JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -67,7 +72,7 @@ router.post('/login', async (req, res) => {
     res.json({
       message: 'Login successful',
       token,
-      user: { id: user.id, name: user.name, email: user.email },
+      user: { id: user.id, name: user.name, email: user.email, role, status: user.status },
     });
   } catch (err) {
     res.status(500).json({ error: 'Server error: ' + err.message });
@@ -77,7 +82,7 @@ router.post('/login', async (req, res) => {
 // GET /api/auth/me  (protected)
 router.get('/me', require('../middleware/auth'), async (req, res) => {
   try {
-    const user = await get('SELECT id, name, email, created_at FROM users WHERE id = ?', [req.user.id]);
+    const user = await get('SELECT id, name, email, role, status, created_at FROM users WHERE id = ?', [req.user.id]);
     if (!user) return res.status(404).json({ error: 'User not found' });
     res.json({ user });
   } catch (err) {

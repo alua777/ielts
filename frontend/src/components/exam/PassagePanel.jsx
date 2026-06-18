@@ -11,14 +11,14 @@ function parseParagraphs(body) {
 export default function PassagePanel({ passage, groups, passageIndex }) {
   const paragraphs = parseParagraphs(passage?.body);
   return (
-    <div className="bg-white rounded-2xl overflow-y-auto" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-      <div className="p-10">
+    <div className="h-full overflow-y-auto rounded-lg bg-white" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+      <div className="p-5 sm:p-8 lg:p-10">
         {/* Meta */}
         <div className="mb-6">
           <p className="text-[11px] font-bold tracking-widest text-violet-400 uppercase mb-2">
             Reading Passage {passageIndex + 1}
           </p>
-          <h1 className="text-[28px] font-bold text-gray-900 leading-tight">
+          <h1 className="text-[22px] font-bold leading-tight text-gray-900 sm:text-[28px]">
             {passage?.title}
           </h1>
           <div className="flex items-center gap-3 mt-3">
@@ -39,7 +39,7 @@ export default function PassagePanel({ passage, groups, passageIndex }) {
                 {label}
               </div>
             )}
-            <p className="text-[16px] text-gray-700 leading-8">{text}</p>
+            <p className="text-[15px] leading-7 text-gray-700 sm:text-[16px] sm:leading-8">{text}</p>
           </div>
         ))}
       </div>

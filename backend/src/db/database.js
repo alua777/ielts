@@ -22,9 +22,14 @@ async function createTables() {
       name TEXT NOT NULL,
       email TEXT UNIQUE NOT NULL,
       password TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT 'user' CHECK(role IN ('user', 'admin')),
+      status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'banned')),
       created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
     )
   `);
+
+  await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS role TEXT NOT NULL DEFAULT 'user' CHECK(role IN ('user', 'admin'))`);
+  await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'banned'))`);
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS passages (
@@ -119,6 +124,91 @@ async function createTables() {
       submitted_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
       UNIQUE (attempt_id, part_index)
     )
+  `);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS practice_tests (
+      id TEXT PRIMARY KEY,
+      section TEXT NOT NULL CHECK(section IN ('reading', 'listening', 'writing', 'speaking')),
+      title TEXT NOT NULL,
+      description TEXT NOT NULL,
+      difficulty TEXT NOT NULL CHECK(difficulty IN ('Beginner', 'Intermediate', 'Advanced')),
+      duration_minutes INTEGER NOT NULL DEFAULT 20,
+      question_types JSONB NOT NULL DEFAULT '[]'::jsonb,
+      status TEXT NOT NULL DEFAULT 'not_started'
+        CHECK(status IN ('not_started', 'in_progress', 'completed')),
+      latest_band REAL,
+      published BOOLEAN NOT NULL DEFAULT TRUE,
+      content JSONB NOT NULL DEFAULT '{}'::jsonb,
+      created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  await pool.query('ALTER TABLE practice_tests ADD COLUMN IF NOT EXISTS published BOOLEAN NOT NULL DEFAULT TRUE');
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS ai_feedback_results (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      test_id TEXT NOT NULL REFERENCES practice_tests(id) ON DELETE CASCADE,
+      section TEXT NOT NULL CHECK(section IN ('writing', 'speaking')),
+      user_response TEXT NOT NULL,
+      overall_band REAL NOT NULL,
+      criteria JSONB NOT NULL DEFAULT '[]'::jsonb,
+      strengths JSONB NOT NULL DEFAULT '[]'::jsonb,
+      improvements JSONB NOT NULL DEFAULT '[]'::jsonb,
+      summary TEXT NOT NULL,
+      created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS practice_test_progress (
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      test_id TEXT NOT NULL REFERENCES practice_tests(id) ON DELETE CASCADE,
+      status TEXT NOT NULL DEFAULT 'not_started'
+        CHECK(status IN ('not_started', 'in_progress', 'completed')),
+      latest_band REAL,
+      updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+      PRIMARY KEY (user_id, test_id)
+    )
+  `);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS onboarding_surveys (
+      user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+      current_band REAL,
+      target_band REAL,
+      weak_sections JSONB NOT NULL DEFAULT '[]'::jsonb,
+      exam_date DATE,
+      study_hours INTEGER,
+      created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS mock_tests (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      description TEXT NOT NULL,
+      difficulty TEXT NOT NULL CHECK(difficulty IN ('Beginner', 'Intermediate', 'Advanced')),
+      duration_minutes INTEGER NOT NULL DEFAULT 165,
+      sections JSONB NOT NULL DEFAULT '[]'::jsonb,
+      created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  await pool.query(`
+    CREATE INDEX IF NOT EXISTS practice_tests_section_idx
+    ON practice_tests(section)
+  `);
+
+  await pool.query(`
+    CREATE INDEX IF NOT EXISTS ai_feedback_user_idx
+    ON ai_feedback_results(user_id, created_at DESC)
   `);
 }
 

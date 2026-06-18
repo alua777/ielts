@@ -24,6 +24,7 @@ export default function Listening() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeQuestionId, setActiveQuestionId] = useState(null);
+  const [mobilePanel, setMobilePanel] = useState('questions');
   const questionsPaneRef = useRef(null);
 
   useEffect(() => {
@@ -67,7 +68,14 @@ export default function Listening() {
     <div className="flex h-[calc(100dvh-64px)] flex-col overflow-hidden bg-slate-50">
       <ListeningPlayer audioUrl={audioUrl} />
 
-      <div className="shrink-0 border-b border-slate-200 bg-slate-50 px-6 py-3">
+      <div className="shrink-0 border-b border-slate-200 bg-slate-50 px-4 py-3 sm:px-6">
+        <div className="mb-3 grid grid-cols-2 rounded-lg bg-slate-200 p-1 lg:hidden">
+          {['questions', 'notes'].map(panel => (
+            <button key={panel} type="button" onClick={() => setMobilePanel(panel)} className={`min-h-11 rounded-md text-[13px] font-bold capitalize ${mobilePanel === panel ? 'bg-white text-violet-700 shadow-sm' : 'text-slate-500'}`}>
+              {panel}
+            </button>
+          ))}
+        </div>
         <QuestionNavigator
           questions={allQuestions}
           answers={answers}
@@ -76,12 +84,12 @@ export default function Listening() {
         />
       </div>
 
-      <div className="mx-auto grid min-h-0 w-full max-w-[1500px] flex-1 grid-cols-[minmax(0,1fr)_360px] gap-4 px-6 py-4">
+      <div className="mx-auto grid min-h-0 w-full max-w-[1500px] flex-1 grid-cols-1 gap-4 px-4 py-3 sm:px-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:py-4">
         <main
           ref={questionsPaneRef}
-          className="h-full min-h-0 overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-sm"
+          className={`${mobilePanel === 'questions' ? 'block' : 'hidden'} h-full min-h-0 overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-sm lg:block`}
         >
-          <div className="p-8">
+          <div className="p-4 sm:p-8">
             <div className="mb-8 flex items-start gap-3 rounded-lg border border-violet-100 bg-violet-50 px-4 py-3">
               <Info size={17} className="mt-0.5 shrink-0 text-violet-600" />
               <p className="text-[13px] font-medium leading-5 text-violet-800">
@@ -122,10 +130,9 @@ export default function Listening() {
             </div>
           </div>
         </main>
-        <ListeningNotesPanel
-          key={attemptId || 'practice'}
-          attemptId={attemptId}
-        />
+        <div className={`${mobilePanel === 'notes' ? 'block' : 'hidden'} min-h-0 lg:block`}>
+          <ListeningNotesPanel key={attemptId || 'practice'} attemptId={attemptId} />
+        </div>
       </div>
     </div>
   );

@@ -11,13 +11,13 @@ const ITEMS = [
 
 export default function SectionScoresCard({ scores }) {
   return (
-    <ResultsPanel title="Sectional Band Scores" className="h-[292px]">
-      <div className="grid grid-cols-4 gap-3 pt-3">
+    <ResultsPanel title="Sectional Band Scores" className="min-h-[292px]">
+      <div className="grid grid-cols-2 gap-3 pt-3 sm:grid-cols-4">
         {ITEMS.map(item => (
           <div key={item.key} className="relative">
-            <span className="absolute left-1/2 top-5 z-10 -translate-x-1/2 text-violet-600">
+            {/* <span className="absolute left-1/2 top-5 z-10 -translate-x-1/2 text-violet-600">
               <item.icon size={18} />
-            </span>
+            </span> */}
             <BandGauge value={scores[item.key]} label={item.label} color={item.color} />
           </div>
         ))}

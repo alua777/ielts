@@ -19,9 +19,9 @@ function FeedbackItem({ icon: Icon, title, score, children, tone }) {
   );
 }
 
-export default function FeedbackCard({ writingScore, speakingScore }) {
+export default function FeedbackCard({ writingScore, speakingScore, onViewFeedback }) {
   return (
-    <ResultsPanel title="AI Feedback Summary" className="h-[305px]">
+    <ResultsPanel title="AI Feedback Summary" className="min-h-[305px]">
       <div className="space-y-5">
         <FeedbackItem icon={PenLine} title="Writing Task 2" score={writingScore.toFixed(1)} tone="bg-violet-50 text-violet-600">
           Develop each main idea fully and support it with a relevant example.
@@ -32,6 +32,13 @@ export default function FeedbackCard({ writingScore, speakingScore }) {
         <FeedbackItem icon={Lightbulb} title="Overall Advice" tone="bg-amber-50 text-amber-600">
           Focus your next study session on writing structure and reading question matching.
         </FeedbackItem>
+        <button
+          type="button"
+          onClick={onViewFeedback}
+          className="min-h-11 w-full rounded-lg border border-violet-200 bg-violet-50 text-[12px] font-bold text-violet-700 hover:bg-violet-100"
+        >
+          View full AI feedback
+        </button>
       </div>
     </ResultsPanel>
   );

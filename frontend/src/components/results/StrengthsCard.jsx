@@ -25,9 +25,9 @@ export default function StrengthsCard({ accuracy }) {
           </div>
         ))}
       </div>
-      <button className="mt-4 flex h-8 w-full items-center justify-center gap-2 rounded-lg border border-violet-100 bg-violet-50 text-[12px] font-bold text-violet-700">
+      {/* <button className="mt-4 flex h-8 w-full items-center justify-center gap-2 rounded-lg border border-violet-100 bg-violet-50 text-[12px] font-bold text-violet-700">
         View Detailed Analysis <ArrowRight size={14} />
-      </button>
+      </button> */}
     </ResultsPanel>
   );
 }

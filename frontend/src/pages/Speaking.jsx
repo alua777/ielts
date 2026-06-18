@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { ArrowRight, Circle, Clock3, Mic2, RotateCcw, Square } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useExam } from '../context/ExamContext';
+import AssessmentCriteria from '../components/exam/AssessmentCriteria';
+import { ExamError, ExamLoader } from '../components/exam/ExamLoader';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 const FONT = 'Plus Jakarta Sans, sans-serif';
@@ -197,7 +199,10 @@ export default function Speaking() {
   const questions = group?.questions || [];
   const isPartTwo = partIndex === 1;
 
-  if (loading) return (
+  if (loading) return <ExamLoader message="Loading speaking test" />;
+  if (error) return <ExamError message={error} />;
+
+  if (loading && window.__useLegacySpeakingLoader) return (
     <div className="flex items-center justify-center bg-[#F8FAFC]" style={{ height: 'calc(100dvh - 64px)' }}>
       <div className="text-center">
         <div className="w-8 h-8 border-2 border-violet-300 border-t-violet-600 rounded-full animate-spin mx-auto mb-3" />
@@ -206,7 +211,7 @@ export default function Speaking() {
     </div>
   );
 
-  if (error) return (
+  if (error && window.__useLegacySpeakingLoader) return (
     <div className="flex items-center justify-center bg-[#F8FAFC]" style={{ height: 'calc(100dvh - 64px)' }}>
       <p className="text-red-400 text-sm" style={{ fontFamily: FONT }}>{error}</p>
     </div>
@@ -218,14 +223,14 @@ export default function Speaking() {
       style={{ height: 'calc(100dvh - 64px)', fontFamily: FONT, overflow: 'hidden' }}
     >
       {/* ── Part tabs ── */}
-      <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 py-3">
+      <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-4 py-3 sm:px-6">
         <div className="inline-flex gap-1 rounded-lg bg-slate-100 p-1">
           {parts.map((_, i) => (
             <button
               key={i}
               onClick={() => { if (!recording) setPartIndex(i); }}
               disabled={recording}
-              className={`h-9 rounded-md border-0 px-5 text-[13px] font-bold transition-all ${
+              className={`min-h-11 rounded-md border-0 px-3 text-[12px] font-bold transition-all sm:px-5 sm:text-[13px] ${
                 partIndex === i
                   ? 'bg-white text-slate-950 shadow-sm'
                   : 'text-slate-500 hover:text-slate-800'
@@ -246,10 +251,10 @@ export default function Speaking() {
       </div>
 
       {/* ── Main content ── */}
-      <div className="grid min-h-0 flex-1 grid-cols-[0.9fr_1.1fr] gap-4 px-6 py-4">
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 overflow-y-auto px-4 py-3 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:overflow-hidden lg:py-4">
 
         {/* Left — Part info + timer + recording */}
-        <div className="flex min-h-0 flex-col rounded-lg border border-slate-200 bg-white p-7 shadow-sm">
+        <div className="flex min-h-[65vh] flex-col rounded-lg border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
 
           {/* Part header */}
           <div className="mb-6">
@@ -378,7 +383,7 @@ export default function Speaking() {
 
         {/* Right — Questions / Task card */}
         <div className="min-h-0 overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-          <div className="p-8">
+          <div className="p-5 sm:p-8">
             <p className="mb-4 text-[11px] font-bold uppercase text-violet-600">
               {isPartTwo ? 'Task Card' : 'Questions'}
             </p>
@@ -406,17 +411,7 @@ export default function Speaking() {
               </div>
             )}
 
-            {/* Scoring criteria */}
-            <div className="mt-8 pt-6 border-t border-gray-100">
-              <p className="mb-3 text-[11px] font-bold uppercase text-slate-400">Scoring Criteria</p>
-              <div className="grid grid-cols-2 gap-2">
-                {['Fluency & Coherence', 'Lexical Resource', 'Grammatical Range', 'Pronunciation'].map(c => (
-                  <div key={c} className="rounded-lg border border-slate-100 bg-slate-50 px-3 py-2">
-                    <p className="text-[12px] font-semibold text-slate-600">{c}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <AssessmentCriteria className="mt-8" />
           </div>
         </div>
       </div>

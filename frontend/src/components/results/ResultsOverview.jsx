@@ -27,17 +27,17 @@ export default function ResultsOverview({
 }) {
   const gap = Math.max(0, target - band);
   return (
-    <ResultsPanel className="grid grid-cols-[1.05fr_1.15fr_0.9fr] items-center gap-7">
+    <ResultsPanel className="grid grid-cols-1 items-center gap-6 xl:grid-cols-[1.05fr_1.15fr_0.9fr] xl:gap-7">
       <div>
         <p className="text-[15px] font-bold text-slate-950">Overall Band Score</p>
-        <div className="mt-3 flex items-end gap-7">
+        <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-end sm:gap-7">
           <div>
-            <p className="text-[68px] font-extrabold leading-none text-violet-600">{band.toFixed(1)}</p>
+            <p className="text-[54px] font-extrabold leading-none text-violet-600 sm:text-[68px]">{band.toFixed(1)}</p>
             <p className="mt-2 text-[13px] font-semibold text-slate-600">
               {band >= 7 ? 'Good User' : band >= 6 ? 'Competent User' : 'Developing User'}
             </p>
           </div>
-          <div className="min-w-44 pb-1">
+          <div className="w-full pb-1 sm:min-w-44">
             <p className="text-[13px] font-semibold text-slate-600">
               Your goal: <strong className="text-slate-950">{target.toFixed(1)}</strong>
             </p>
@@ -51,7 +51,7 @@ export default function ResultsOverview({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-x-8 gap-y-6 border-x border-slate-200 px-7">
+      <div className="grid grid-cols-2 gap-5 border-y border-slate-200 py-6 xl:border-x xl:border-y-0 xl:px-7 xl:py-0">
         <MetaItem icon={CalendarDays} label="Test Date" value={date} />
         <MetaItem icon={FileText} label="Test Type" value="Academic" />
         <MetaItem icon={Clock3} label="Total Time" value={time} />

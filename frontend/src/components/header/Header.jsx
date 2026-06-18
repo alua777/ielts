@@ -42,7 +42,14 @@ export default function Header() {
     );
   }
 
-  if (['/', '/dashboard', '/results', '/login', '/register'].includes(location.pathname)) {
+  if (
+    ['/', '/dashboard', '/review-answers', '/login', '/register'].includes(location.pathname)
+    || location.pathname === '/onboarding'
+    || location.pathname.startsWith('/results')
+    || location.pathname.startsWith('/practice')
+    || location.pathname.startsWith('/history')
+    || location.pathname.startsWith('/admin')
+  ) {
     return null;
   }
 

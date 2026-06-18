@@ -2,10 +2,10 @@ import ResultsPanel from './ResultsPanel';
 
 export default function PerformanceCard({ sectionRows }) {
   return (
-    <ResultsPanel title="Performance by Section" className="h-[305px]">
+    <ResultsPanel title="Performance by Section" className="min-h-[305px]">
       <div className="space-y-4">
         {sectionRows.map(row => (
-          <div key={row.label} className="grid grid-cols-[120px_1fr_42px_58px] items-center gap-3">
+          <div key={row.label} className="grid grid-cols-[90px_1fr_36px] items-center gap-2 sm:grid-cols-[120px_1fr_42px_58px] sm:gap-3">
             <div>
               <p className="text-[12px] font-bold text-slate-800">{row.label}</p>
               <p className="mt-0.5 text-[10px] text-slate-400">{row.detail}</p>
@@ -14,7 +14,7 @@ export default function PerformanceCard({ sectionRows }) {
               <div className="h-full rounded-full bg-violet-600" style={{ width: `${row.percent}%` }} />
             </div>
             <p className="text-right text-[12px] font-bold text-slate-900">{row.band.toFixed(1)}</p>
-            <p className="text-right text-[11px] text-slate-500">{row.correct}/{row.total}</p>
+            <p className="hidden text-right text-[11px] text-slate-500 sm:block">{row.correct}/{row.total}</p>
           </div>
         ))}
       </div>

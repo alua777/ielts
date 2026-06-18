@@ -27,6 +27,7 @@ export default function ReadingPractice() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeQuestionId, setActiveQuestionId] = useState(null);
+  const [mobileView, setMobileView] = useState('passage');
   const pendingQuestionRef = useRef(null);
 
   useEffect(() => {
@@ -78,6 +79,7 @@ export default function ReadingPractice() {
 
   const selectQuestion = questionId => {
     setActiveQuestionId(questionId);
+    setMobileView('questions');
     const targetPassageIndex = passages.findIndex(item =>
       (item.groups || []).some(group =>
         (group.questions || []).some(question => question.id === questionId)
@@ -101,7 +103,14 @@ export default function ReadingPractice() {
 
   return (
     <div className="flex h-[calc(100dvh-64px)] flex-col overflow-hidden bg-slate-50">
-      <div className="grid shrink-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-5 px-6 pb-3 pt-4">
+      <div className="shrink-0 space-y-3 px-4 pb-3 pt-3 sm:px-6 lg:grid lg:grid-cols-[auto_minmax(0,1fr)] lg:items-center lg:gap-5 lg:space-y-0 lg:pt-4">
+        <div className="grid grid-cols-2 rounded-lg bg-slate-200 p-1 lg:hidden">
+          {['passage', 'questions'].map(view => (
+            <button key={view} type="button" onClick={() => setMobileView(view)} className={`min-h-11 rounded-md text-[13px] font-bold capitalize ${mobileView === view ? 'bg-white text-violet-700 shadow-sm' : 'text-slate-500'}`}>
+              {view}
+            </button>
+          ))}
+        </div>
         <PassageTabs
           passages={passages}
           currentIndex={currentIndex}
@@ -116,22 +125,22 @@ export default function ReadingPractice() {
         />
       </div>
 
-      <div className="grid min-h-0 flex-1 grid-cols-[1.15fr_0.95fr] gap-4 px-6 pb-4">
-        <PassagePanel
-          passage={passage}
-          groups={groups}
-          passageIndex={currentIndex}
-        />
-        <QuestionsPanel
-          groups={groups}
-          answers={answers}
-          saveAnswer={saveAnswer}
-          isLastPassage={isLastPassage}
-          onNext={nextStage}
-          onNextLabel="Submit Reading - Continue to Listening"
-          onNextPassage={() => setPassageIndex(index => index + 1)}
-          onNextPassageLabel="Next Passage"
-        />
+      <div className="min-h-0 flex-1 px-4 pb-4 sm:px-6 lg:grid lg:grid-cols-[1.15fr_0.95fr] lg:gap-4">
+        <div className={`h-full min-h-0 ${mobileView === 'passage' ? 'block' : 'hidden'} lg:block`}>
+          <PassagePanel passage={passage} groups={groups} passageIndex={currentIndex} />
+        </div>
+        <div className={`h-full min-h-0 ${mobileView === 'questions' ? 'block' : 'hidden'} lg:block`}>
+          <QuestionsPanel
+            groups={groups}
+            answers={answers}
+            saveAnswer={saveAnswer}
+            isLastPassage={isLastPassage}
+            onNext={nextStage}
+            onNextLabel="Submit Reading - Continue to Listening"
+            onNextPassage={() => setPassageIndex(index => index + 1)}
+            onNextPassageLabel="Next Passage"
+          />
+        </div>
       </div>
     </div>
   );

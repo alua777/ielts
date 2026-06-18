@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-
-const API = 'http://localhost:5000/api';
+import { API } from '../lib/api';
 
 export default function RegisterPage() {
   const { login } = useAuth();
@@ -31,7 +30,7 @@ export default function RegisterPage() {
       const data = await res.json();
       if (!res.ok) return setError(data.error || 'Registration failed.');
       login(data.user, data.token);
-      navigate('/');
+      navigate('/onboarding');
     } catch {
       setError('Could not connect to server.');
     } finally {

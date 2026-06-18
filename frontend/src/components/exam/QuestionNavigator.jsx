@@ -10,6 +10,7 @@ export default function QuestionNavigator({
   answers,
   activeQuestionId,
   onQuestionSelect,
+  statusMap,
 }) {
   const railRef = useRef(null);
   const sortedQuestions = [...questions].sort(
@@ -45,6 +46,7 @@ export default function QuestionNavigator({
           {sortedQuestions.map(question => {
             const answered = hasAnswer(answers[question.id]);
             const active = activeQuestionId === question.id;
+            const reviewStatus = statusMap?.[question.id];
 
             return (
               <button
@@ -54,14 +56,22 @@ export default function QuestionNavigator({
                 aria-label={`Go to question ${question.question_number}`}
                 className={`relative grid h-8 w-8 shrink-0 place-items-center rounded-md border text-[11px] font-bold transition ${
                   active
-                    ? 'border-violet-600 bg-violet-600 text-white shadow-sm'
+                    ? reviewStatus === 'correct'
+                      ? 'border-emerald-600 bg-emerald-600 text-white shadow-sm'
+                      : reviewStatus === 'incorrect'
+                        ? 'border-red-600 bg-red-600 text-white shadow-sm'
+                        : 'border-violet-600 bg-violet-600 text-white shadow-sm'
+                    : reviewStatus === 'correct'
+                      ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                      : reviewStatus === 'incorrect'
+                        ? 'border-red-200 bg-red-50 text-red-700'
                     : answered
                       ? 'border-violet-100 bg-violet-50 text-violet-700 hover:border-violet-300'
                       : 'border-slate-200 bg-white text-slate-600 hover:border-violet-300 hover:text-violet-700'
                 }`}
               >
                 {question.question_number}
-                {answered && !active && (
+                {answered && !active && !reviewStatus && (
                   <Check
                     size={7}
                     strokeWidth={3}

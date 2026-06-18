@@ -1,6 +1,6 @@
-export default function BandGauge({ value, label, color = '#6d4aff', size = 96 }) {
+export default function BandGauge({ value, label, color = '#6d4aff', size = 120 }) {
   const score = Math.max(0, Math.min(9, Number(value || 0)));
-  const radius = 38;
+  const radius = 100;
   const circumference = Math.PI * radius;
   const progress = (score / 9) * circumference;
 

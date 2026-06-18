@@ -22,17 +22,17 @@ export default function DashboardHeader({
   }, []);
 
   return (
-    <header className="mb-4 flex min-h-[64px] items-center justify-between gap-4">
+    <header className="mb-4 flex min-h-[64px] flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
       <div className="min-w-0">
-        <h1 className="truncate text-[32px] font-bold leading-tight tracking-tight text-slate-950">
+        <h1 className="text-[26px] font-bold leading-tight tracking-tight text-slate-950 sm:text-[32px]">
           Welcome back, {firstName}
         </h1>
-        <p className="mt-1 text-[16px] font-medium text-slate-500">
+        <p className="mt-1 text-[14px] font-medium text-slate-500 sm:text-[16px]">
           Let's continue your journey to band {targetBand.toFixed(1)}
         </p>
       </div>
 
-      <div className="flex shrink-0 items-center gap-3">
+      <div className="flex w-full shrink-0 items-center justify-end gap-2 sm:w-auto sm:gap-3">
         <div className="hidden text-right xl:block">
           <p className="text-[12px] font-medium text-slate-400">Latest attempt</p>
           <p className="text-[14px] font-bold text-slate-900">{latestAttempt}</p>
