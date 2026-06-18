@@ -26,10 +26,7 @@ export default function NormalHeader() {
   };
 
   return (
-    <header
-      className="sticky top-0 z-50 border-b border-gray-100 bg-white px-6 py-0 shadow-sm"
-      style={{ fontFamily: 'Inter, Plus Jakarta Sans, sans-serif' }}
-    >
+    <header className="sticky top-0 z-50 border-b border-gray-100 bg-white px-6 py-0 shadow-sm">
       <div className="mx-auto flex max-w-7xl h-14 items-center justify-between gap-6">
 
         {/* Logo */}

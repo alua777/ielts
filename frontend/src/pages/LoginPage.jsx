@@ -35,10 +35,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div
-      className="min-h-screen bg-violet-50 flex items-center justify-center p-4"
-      style={{ fontFamily: 'Plus Jakarta Sans, serif' }}
-    >
+    <div className="min-h-screen bg-violet-50 flex items-center justify-center p-4">
       <div className="bg-white border border-purple-200 rounded-3xl p-8 w-full max-w-md shadow-sm">
         <div className="text-center mb-8">
           <div className="mx-auto h-28 w-28 overflow-hidden rounded-2xl">
@@ -67,7 +64,6 @@ export default function LoginPage() {
               onKeyDown={e => e.key === 'Enter' && submit()}
               placeholder="you@example.com"
               className="w-full border border-purple-200 rounded-xl px-4 py-2.5 text-sm text-gray-800 bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white transition-all"
-              style={{ fontFamily: 'Plus Jakarta Sans, serif' }}
             />
           </div>
           <div>
@@ -82,7 +78,6 @@ export default function LoginPage() {
               onKeyDown={e => e.key === 'Enter' && submit()}
               placeholder="Enter your password"
               className="w-full border border-purple-200 rounded-xl px-4 py-2.5 text-sm text-gray-800 bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white transition-all"
-              style={{ fontFamily: 'Plus Jakarta Sans, serif' }}
             />
           </div>
         </div>
@@ -91,7 +86,6 @@ export default function LoginPage() {
           onClick={submit}
           disabled={loading}
           className="w-full py-3 rounded-2xl bg-purple-600 text-white font-semibold text-sm hover:bg-purple-700 active:bg-purple-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed border-0 cursor-pointer"
-          style={{ fontFamily: 'Plus Jakarta Sans, serif' }}
         >
           {loading ? 'Signing in...' : 'Sign In'}
         </button>

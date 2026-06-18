@@ -6,7 +6,6 @@ import AssessmentCriteria from '../components/exam/AssessmentCriteria';
 import { ExamError, ExamLoader } from '../components/exam/ExamLoader';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-const FONT = 'Plus Jakarta Sans, sans-serif';
 
 const PART_META = {
   0: { label: 'Part 1', sublabel: 'Introduction & Interview', duration: 5 * 60, hint: 'Answer each question naturally in 2–3 sentences. The examiner wants to hear your natural speaking voice.' },
@@ -206,21 +205,21 @@ export default function Speaking() {
     <div className="flex items-center justify-center bg-[#F8FAFC]" style={{ height: 'calc(100dvh - 64px)' }}>
       <div className="text-center">
         <div className="w-8 h-8 border-2 border-violet-300 border-t-violet-600 rounded-full animate-spin mx-auto mb-3" />
-        <p className="text-[13px] text-gray-400" style={{ fontFamily: FONT }}>Loading speaking test…</p>
+        <p className="text-[13px] text-gray-400">Loading speaking test…</p>
       </div>
     </div>
   );
 
   if (error && window.__useLegacySpeakingLoader) return (
     <div className="flex items-center justify-center bg-[#F8FAFC]" style={{ height: 'calc(100dvh - 64px)' }}>
-      <p className="text-red-400 text-sm" style={{ fontFamily: FONT }}>{error}</p>
+      <p className="text-red-400 text-sm">{error}</p>
     </div>
   );
 
   return (
     <div
       className="flex flex-col bg-slate-50"
-      style={{ height: 'calc(100dvh - 64px)', fontFamily: FONT, overflow: 'hidden' }}
+      style={{ height: 'calc(100dvh - 64px)', overflow: 'hidden' }}
     >
       {/* ── Part tabs ── */}
       <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-4 py-3 sm:px-6">
@@ -309,7 +308,6 @@ export default function Speaking() {
                 onChange={e => setNotes(e.target.value)}
                 placeholder="Jot down your notes here during preparation…"
                 className="h-28 w-full resize-none rounded-lg border border-slate-200 bg-slate-50 p-3 text-[13px] text-slate-700 outline-none focus:border-violet-400 focus:bg-white focus:ring-2 focus:ring-violet-100"
-                style={{ fontFamily: FONT }}
               />
             </div>
           )}

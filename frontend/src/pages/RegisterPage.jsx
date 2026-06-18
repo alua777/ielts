@@ -39,10 +39,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div
-      className="min-h-screen bg-violet-50 flex items-center justify-center p-4"
-      style={{ fontFamily: 'Plus Jakarta Sans, serif' }}
-    >
+    <div className="min-h-screen bg-violet-50 flex items-center justify-center p-4">
       <div className="bg-white border border-purple-200 rounded-3xl p-8 w-full max-w-md shadow-sm">
         <div className="text-center mb-8">
           <div className="mx-auto h-28 w-28 overflow-hidden rounded-2xl">
