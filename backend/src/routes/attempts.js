@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 const { all, get, run } = require('../db/database');
 const auth = require('../middleware/auth');
 const { buildMockExamFeedback } = require('../utils/mockExamFeedback');
+const { evaluateWriting } = require('../services/writingFeedback');
 
 const router = express.Router();
 
@@ -120,6 +121,13 @@ router.get('/:id', auth, async (req, res) => {
       [req.params.id]
     );
     const mockFeedback = buildMockExamFeedback(writingSubmissions, speakingSubmissions);
+    if (attempt.writing_feedback) {
+      mockFeedback.writing = {
+        ...mockFeedback.writing,
+        ...attempt.writing_feedback,
+        submissions: mockFeedback.writing.submissions,
+      };
+    }
 
     res.json({
       attempt,
@@ -213,6 +221,50 @@ router.post('/:id/complete', auth, async (req, res) => {
       ? speakingScores.reduce((sum, row) => sum + Number(row.score || 0), 0) / speakingScores.length
       : null;
     const band = speakingBand ? Math.max(toBandScore(correct, total), speakingBand) : toBandScore(correct, total);
+    let writingFeedback = null;
+    const writingAnswers = await all(
+      `SELECT a.user_answer AS essay_text, q.question_text, p.title AS passage_title
+       FROM answers a
+       JOIN questions q ON q.id = a.question_id
+       JOIN question_groups qg ON qg.id = q.group_id
+       JOIN passages p ON p.id = qg.passage_id
+       WHERE a.attempt_id = ? AND p.section = 'writing' AND a.user_answer <> ''
+       ORDER BY q.question_number`,
+      [req.params.id]
+    );
+
+    if (writingAnswers.length && process.env.AI_API_KEY) {
+      try {
+        const evaluated = await Promise.all(writingAnswers.map(answer => evaluateWriting({
+          prompt: answer.question_text,
+          essay: answer.essay_text,
+          taskType: answer.passage_title?.toLowerCase().includes('task 1') ? 'task1' : 'task2',
+        })));
+        const available = evaluated.filter(Boolean);
+        if (available.length) {
+          const overall = Math.round(
+            (available.reduce((sum, item) => sum + item.overall, 0) / available.length) * 2
+          ) / 2;
+          writingFeedback = {
+            section: 'writing',
+            overall_band: overall,
+            criteria: available.length === 1
+              ? available[0].criteria
+              : available[0].criteria.map((criterion, index) => ({
+                ...criterion,
+                band: Math.round(
+                  (available.reduce((sum, item) => sum + item.criteria[index].band, 0) / available.length) * 2
+                ) / 2,
+              })),
+            strengths: [...new Set(available.flatMap(item => item.strengths))].slice(0, 4),
+            improvements: [...new Set(available.flatMap(item => item.improvements))].slice(0, 4),
+            summary: available.map((item, index) => `Task ${index + 1}: ${item.summary}`).join(' '),
+          };
+        }
+      } catch (aiError) {
+        console.error('Mock writing AI feedback failed; using local fallback:', aiError.message);
+      }
+    }
 
     await run(
       `UPDATE exam_attempts SET
@@ -220,9 +272,10 @@ router.post('/:id/complete', auth, async (req, res) => {
         completed_at = CURRENT_TIMESTAMP,
         time_taken_seconds = ?,
         total_score = ?,
-        band_score = ?
+        band_score = ?,
+        writing_feedback = ?::jsonb
        WHERE id = ?`,
-      [time_taken_seconds || null, correct, band, req.params.id]
+      [time_taken_seconds || null, correct, band, writingFeedback ? JSON.stringify(writingFeedback) : null, req.params.id]
     );
 
     res.json({

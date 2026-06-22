@@ -2,6 +2,7 @@ const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const { get, run } = require('../db/database');
 const auth = require('../middleware/auth');
+const { evaluateWriting } = require('../services/writingFeedback');
 
 const router = express.Router();
 
@@ -81,7 +82,19 @@ async function handleCheck(section, req, res) {
     const test = await get('SELECT * FROM practice_tests WHERE id = ? AND section = ?', [testId, section]);
     if (!test) return res.status(404).json({ error: `${section} practice test not found` });
 
-    const feedback = scoreResponse(section, userResponse);
+    let feedback = scoreResponse(section, userResponse);
+    if (section === 'writing') {
+      try {
+        const aiFeedback = await evaluateWriting({
+          prompt: test.content?.prompt || test.description || test.title,
+          essay: userResponse,
+          taskType: test.content?.task_type,
+        });
+        if (aiFeedback) feedback = aiFeedback;
+      } catch (aiError) {
+        console.error('Writing AI feedback failed; using local fallback:', aiError.message);
+      }
+    }
     const id = uuidv4();
     await run(
       `INSERT INTO ai_feedback_results

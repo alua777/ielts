@@ -78,9 +78,11 @@ async function createTables() {
       completed_at TIMESTAMPTZ,
       time_taken_seconds INTEGER,
       total_score REAL,
-      band_score REAL
+      band_score REAL,
+      writing_feedback JSONB
     )
   `);
+  await pool.query('ALTER TABLE exam_attempts ADD COLUMN IF NOT EXISTS writing_feedback JSONB');
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS answers (
