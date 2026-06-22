@@ -4,8 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useExam } from '../context/ExamContext';
 import AssessmentCriteria from '../components/exam/AssessmentCriteria';
 import { ExamError, ExamLoader } from '../components/exam/ExamLoader';
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+import { API } from '../lib/api';
 
 const PART_META = {
   0: { label: 'Part 1', sublabel: 'Introduction & Interview', duration: 5 * 60, hint: 'Answer each question naturally in 2–3 sentences. The examiner wants to hear your natural speaking voice.' },

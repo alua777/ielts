@@ -6,8 +6,7 @@ import QuestionNavigator from '../components/exam/QuestionNavigator';
 import PassagePanel from '../components/exam/PassagePanel';
 import PassageTabs from '../components/exam/PassageTabs';
 import QuestionsPanel from '../components/exam/QuestionsPanel';
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+import { API } from '../lib/api';
 
 export default function ReadingPractice() {
   const { token } = useAuth();

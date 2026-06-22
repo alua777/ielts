@@ -8,8 +8,7 @@ import ReviewQuestionGroup from '../components/review/ReviewQuestionGroup';
 import { useAuth } from '../context/AuthContext';
 import ResultsSkeleton from '../components/skeletons/ResultsSkeleton';
 import MockFeedbackReview from '../components/review/MockFeedbackReview';
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+import { API } from '../lib/api';
 
 export default function ReviewAnswers() {
   const { token } = useAuth();

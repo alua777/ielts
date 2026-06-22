@@ -17,8 +17,7 @@ import { useExam } from '../context/ExamContext';
 import DashboardSkeleton from '../components/skeletons/DashboardSkeleton';
 import ErrorState from '../components/ui/ErrorState';
 import NewUserDashboard from '../components/dashboard/NewUserDashboard';
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+import { API } from '../lib/api';
 
 export default function Dashboard() {
   const { token, user, logout } = useAuth();

@@ -1,6 +1,5 @@
 import { FileText, Mic2 } from 'lucide-react';
-
-const API_ORIGIN = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/api$/, '');
+import { resolveApiAssetUrl } from '../../lib/api';
 
 function CriteriaGrid({ criteria }) {
   return (
@@ -90,7 +89,7 @@ export default function MockFeedbackReview({ section, feedback }) {
               <article key={submission.id} className="rounded-lg border border-slate-200 bg-white p-5">
                 <h3 className="text-[14px] font-bold text-slate-950">Speaking Part {Number(submission.part_index) + 1}</h3>
                 <p className="mt-1 text-[12px] text-slate-500">{submission.passage_title || 'Recorded response'}</p>
-                <audio controls className="mt-4 w-full" src={`${API_ORIGIN}${submission.audio_path}`} />
+                <audio controls className="mt-4 w-full" src={resolveApiAssetUrl(submission.audio_path)} />
               </article>
             ))}
           </section>

@@ -13,8 +13,7 @@ import { useAuth } from '../context/AuthContext';
 import { useExam } from '../context/ExamContext';
 import ResultsSkeleton from '../components/skeletons/ResultsSkeleton';
 import ErrorState from '../components/ui/ErrorState';
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+import { API } from '../lib/api';
 
 function toBand(correct, total) {
   if (!total) return 0;

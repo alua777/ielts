@@ -7,15 +7,7 @@ import QuestionGroup from '../components/exam/QuestionGroup';
 import QuestionNavigator from '../components/exam/QuestionNavigator';
 import ListeningPlayer from '../components/listening/ListeningPlayer';
 import ListeningNotesPanel from '../components/listening/ListeningNotesPanel';
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-const API_ORIGIN = API.replace(/\/api\/?$/, '');
-
-function resolveMediaUrl(url) {
-  if (!url) return '';
-  if (/^https?:\/\//i.test(url)) return url;
-  return `${API_ORIGIN}${url.startsWith('/') ? url : `/${url}`}`;
-}
+import { API, resolveApiAssetUrl } from '../lib/api';
 
 export default function Listening() {
   const { token } = useAuth();
@@ -51,7 +43,7 @@ export default function Listening() {
   const allQuestions = allGroups
     .flatMap(group => group.questions || [])
     .sort((a, b) => a.question_number - b.question_number);
-  const audioUrl = resolveMediaUrl(passages.find(passage => passage.audio_url)?.audio_url);
+  const audioUrl = resolveApiAssetUrl(passages.find(passage => passage.audio_url)?.audio_url);
 
   const selectedQuestionId = activeQuestionId || allQuestions[0]?.id || null;
 

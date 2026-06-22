@@ -4,8 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useExam } from '../context/ExamContext';
 import { ExamError, ExamLoader } from '../components/exam/ExamLoader';
 import AssessmentCriteria from '../components/exam/AssessmentCriteria';
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+import { API } from '../lib/api';
 
 export default function Writing() {
   const { token } = useAuth();

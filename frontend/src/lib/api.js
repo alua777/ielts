@@ -1,4 +1,11 @@
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const configuredApiUrl = import.meta.env.VITE_API_URL?.trim();
+const API = (configuredApiUrl || '/api').replace(/\/+$/, '');
+const API_ORIGIN = API.replace(/\/api$/, '');
+
+export function resolveApiAssetUrl(url) {
+  if (!url || /^https?:\/\//i.test(url)) return url || '';
+  return `${API_ORIGIN}${url.startsWith('/') ? url : `/${url}`}`;
+}
 
 export async function apiRequest(path, token, options = {}) {
   const isFormData = options.body instanceof FormData;
@@ -15,4 +22,4 @@ export async function apiRequest(path, token, options = {}) {
   return data;
 }
 
-export { API };
+export { API, API_ORIGIN };

@@ -1,8 +1,7 @@
 import { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
-
-const API = 'http://localhost:5000/api';
+import { API } from '../lib/api';
 
 // Stage order and their durations in seconds
 const STAGES = ['reading', 'listening', 'writing', 'speaking'];
