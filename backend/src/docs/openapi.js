@@ -97,6 +97,7 @@ const openApiDocument = {
           test_title: { type: 'string' },
           section: { type: 'string', enum: ['writing', 'speaking'] },
           overall_band: { type: 'number' },
+          assessment_source: { type: 'string', enum: ['ai', 'local_fallback'] },
           criteria: { type: 'array', items: { $ref: '#/components/schemas/Criterion' } },
           strengths: { type: 'array', items: { type: 'string' } },
           improvements: { type: 'array', items: { type: 'string' } },

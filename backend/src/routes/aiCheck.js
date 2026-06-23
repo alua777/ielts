@@ -100,6 +100,7 @@ async function handleCheck(section, req, res) {
     if (!test) return res.status(404).json({ error: `${section} practice test not found` });
 
     let feedback = scoreResponse(section, userResponse);
+    let assessmentSource = 'local_fallback';
     if (section === 'writing') {
       try {
         const aiFeedback = await evaluateWriting({
@@ -107,10 +108,18 @@ async function handleCheck(section, req, res) {
           essay: userResponse,
           taskType: test.content?.task_type,
         });
-        if (aiFeedback) feedback = aiFeedback;
+        if (aiFeedback) {
+          feedback = aiFeedback;
+          assessmentSource = 'ai';
+          console.log(`[writing-feedback] AI assessment used for test ${testId} (model: ${process.env.AI_MODEL || 'gpt-4.1-mini'})`);
+        } else {
+          console.warn(`[writing-feedback] Local fallback used for test ${testId}: AI_API_KEY is not configured`);
+        }
       } catch (aiError) {
-        console.error('Writing AI feedback failed; using local fallback:', aiError.message);
+        console.error(`[writing-feedback] Local fallback used for test ${testId}:`, aiError.message);
       }
+    } else {
+      console.warn(`[${section}-feedback] Local fallback used for test ${testId}: no external evaluator is configured`);
     }
     const id = uuidv4();
     await run(
@@ -147,6 +156,7 @@ async function handleCheck(section, req, res) {
         section,
         user_response: userResponse,
         overall_band: feedback.overall,
+        assessment_source: assessmentSource,
         ...feedback,
       },
     });

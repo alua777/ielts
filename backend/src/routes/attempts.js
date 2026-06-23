@@ -260,10 +260,15 @@ router.post('/:id/complete', auth, async (req, res) => {
             improvements: [...new Set(available.flatMap(item => item.improvements))].slice(0, 4),
             summary: available.map((item, index) => `Task ${index + 1}: ${item.summary}`).join(' '),
           };
+          console.log(`[writing-feedback] AI assessment used for mock attempt ${req.params.id} (${available.length} task${available.length === 1 ? '' : 's'}, model: ${process.env.AI_MODEL || 'gpt-4.1-mini'})`);
+        } else {
+          console.warn(`[writing-feedback] Local fallback used for mock attempt ${req.params.id}: AI evaluator returned no result`);
         }
       } catch (aiError) {
-        console.error('Mock writing AI feedback failed; using local fallback:', aiError.message);
+        console.error(`[writing-feedback] Local fallback used for mock attempt ${req.params.id}:`, aiError.message);
       }
+    } else if (writingAnswers.length) {
+      console.warn(`[writing-feedback] Local fallback used for mock attempt ${req.params.id}: AI_API_KEY is not configured`);
     }
 
     await run(
