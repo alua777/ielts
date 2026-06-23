@@ -253,8 +253,8 @@ const openApiDocument = {
       post: {
         tags: ['AI Feedback'],
         summary: 'Assess practice writing with the configured AI provider',
-        description: 'Uses the backend AI provider when configured and stores the IELTS criteria feedback. Falls back to the local practice estimator if the provider is unavailable.',
-        requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['test_id', 'response'], properties: { test_id: { type: 'string', example: 'writing-task2-technology' }, response: { type: 'string' }, essay_text: { type: 'string' } } } } } },
+        description: 'Uses the backend AI provider when configured and stores the IELTS criteria feedback. Falls back to the local practice estimator if the provider is unavailable. When editing raw JSON in Swagger, encode paragraph breaks inside the response as \\n.',
+        requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['test_id', 'response'], properties: { test_id: { type: 'string', example: 'writing-task2-technology' }, response: { type: 'string', example: 'Introduction paragraph.\\n\\nFirst body paragraph.\\n\\nConclusion paragraph.' }, essay_text: { type: 'string' } } } } } },
         responses: { 201: { description: 'Writing feedback generated and saved' } },
       },
     },

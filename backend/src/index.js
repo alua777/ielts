@@ -14,7 +14,7 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.get('/api/openapi.json', (_req, res) => {
@@ -55,6 +55,14 @@ app.use((req, res) => {
 // Error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    return res.status(400).json({
+      error: 'Invalid JSON body. In Swagger, keep the essay inside quotes and replace paragraph breaks with \\n.',
+    });
+  }
+  if (err.type === 'entity.too.large') {
+    return res.status(413).json({ error: 'Request body is too large. Essays must be under 1 MB.' });
+  }
   res.status(500).json({ error: 'Internal server error' });
 });
 
