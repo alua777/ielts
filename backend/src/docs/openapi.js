@@ -3,7 +3,7 @@ const openApiDocument = {
   info: {
     title: 'IELTS Buddy API',
     version: '1.0.0',
-    description: 'Backend API for IELTS Buddy authentication, mock attempts, practice tests, AI feedback previews, onboarding survey, and history.',
+    description: 'Backend API for IELTS Buddy authentication, mock attempts, practice tests, API-powered writing assessment, feedback, onboarding survey, and history.',
   },
   servers: [
     { url: 'https://ielts-jt4m.onrender.com/api', description: 'Production API' },
@@ -251,15 +251,41 @@ const openApiDocument = {
     '/ai-check/writing': {
       post: {
         tags: ['AI Feedback'],
-        summary: 'Generate fake AI writing feedback for a practice test',
+        summary: 'Assess practice writing with the configured AI provider',
+        description: 'Uses the backend AI provider when configured and stores the IELTS criteria feedback. Falls back to the local practice estimator if the provider is unavailable.',
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['test_id', 'response'], properties: { test_id: { type: 'string', example: 'writing-task2-technology' }, response: { type: 'string' }, essay_text: { type: 'string' } } } } } },
-        responses: { 201: { description: 'Feedback generated' } },
+        responses: { 201: { description: 'Writing feedback generated and saved' } },
+      },
+    },
+    '/ai-check/status': {
+      get: {
+        tags: ['AI Feedback'],
+        summary: 'Check AI writing configuration without calling the provider',
+        description: 'Reports whether a backend-only API key is configured. It never returns the key and does not make a provider request.',
+        responses: {
+          200: {
+            description: 'Safe AI configuration status',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    writing_ai_configured: { type: 'boolean' },
+                    provider_host: { type: 'string' },
+                    model: { type: 'string' },
+                    fallback_enabled: { type: 'boolean' },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     },
     '/ai-check/speaking': {
       post: {
         tags: ['AI Feedback'],
-        summary: 'Generate fake AI speaking feedback for a practice test',
+        summary: 'Generate local preview feedback for speaking practice',
         requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', required: ['test_id', 'response'], properties: { test_id: { type: 'string', example: 'speaking-public-transport' }, response: { type: 'string' }, transcript: { type: 'string' } } } } } },
         responses: { 201: { description: 'Feedback generated' } },
       },

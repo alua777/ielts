@@ -6,6 +6,23 @@ const { evaluateWriting } = require('../services/writingFeedback');
 
 const router = express.Router();
 
+router.get('/status', auth, (_req, res) => {
+  const apiUrl = process.env.AI_API_URL?.trim() || 'https://api.openai.com/v1/chat/completions';
+  let providerHost = 'invalid URL';
+  try {
+    providerHost = new URL(apiUrl).host;
+  } catch {
+    // Return a safe configuration status without exposing credentials or the full URL.
+  }
+
+  res.json({
+    writing_ai_configured: Boolean(process.env.AI_API_KEY?.trim()),
+    provider_host: providerHost,
+    model: process.env.AI_MODEL?.trim() || 'gpt-4.1-mini',
+    fallback_enabled: true,
+  });
+});
+
 function words(value = '') {
   return value.trim().split(/\s+/).filter(Boolean);
 }
