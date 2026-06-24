@@ -46,7 +46,7 @@ export default function FeedbackReport({ feedback }) {
             <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100">
               <div className="h-full rounded-full bg-violet-600" style={{ width: `${(Number(item.band) / 9) * 100}%` }} />
             </div>
-            <p className="mt-3 text-[13px] leading-6 text-slate-500">{item.feedback}</p>
+            <p className="mt-3 whitespace-pre-wrap text-[13px] leading-6 text-slate-500">{item.feedback}</p>
           </article>
         ))}
       </section>

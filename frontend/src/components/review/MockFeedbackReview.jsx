@@ -31,6 +31,32 @@ function AdviceList({ title, items, tone }) {
   );
 }
 
+function TaskFeedback({ feedback }) {
+  if (!feedback) return null;
+  return (
+    <div className="mt-5 space-y-4 rounded-lg border border-violet-100 bg-violet-50/40 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h4 className="text-[14px] font-bold text-slate-950">AI feedback for this question</h4>
+        <span className="rounded-full bg-white px-3 py-1 text-[12px] font-bold text-violet-700">
+          Band {Number(feedback.overall_band).toFixed(1)}
+        </span>
+      </div>
+      <p className="text-[13px] leading-6 text-slate-600">{feedback.summary}</p>
+      <div className="grid gap-3 md:grid-cols-2">
+        {(feedback.criteria || []).map(item => (
+          <article key={item.label} className="rounded-lg border border-slate-200 bg-white p-4">
+            <div className="flex items-center justify-between gap-3">
+              <h5 className="text-[13px] font-bold text-slate-900">{item.label}</h5>
+              <span className="text-[16px] font-extrabold text-violet-700">{Number(item.band).toFixed(1)}</span>
+            </div>
+            <p className="mt-2 whitespace-pre-wrap text-[12px] leading-6 text-slate-600">{item.feedback}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function MockFeedbackReview({ section, feedback }) {
   const isWriting = section === 'writing';
   if (!feedback) {
@@ -80,6 +106,7 @@ export default function MockFeedbackReview({ section, feedback }) {
                 <div className="mt-4 whitespace-pre-wrap rounded-lg bg-slate-50 p-5 text-[14px] leading-7 text-slate-700">
                   {submission.essay_text}
                 </div>
+                <TaskFeedback feedback={submission.ai_feedback} />
               </article>
             ))}
           </section>

@@ -2,7 +2,7 @@ const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const { get, run } = require('../db/database');
 const auth = require('../middleware/auth');
-const { evaluateWriting } = require('../services/writingFeedback');
+const { evaluateWriting, buildWritingPrompt } = require('../services/writingFeedback');
 
 const router = express.Router();
 
@@ -104,7 +104,12 @@ async function handleCheck(section, req, res) {
     if (section === 'writing') {
       try {
         const aiFeedback = await evaluateWriting({
-          prompt: test.content?.prompt || test.description || test.title,
+          prompt: buildWritingPrompt({
+            title: test.title,
+            description: test.description,
+            prompt: test.content?.prompt,
+            taskType: test.content?.task_type,
+          }),
           essay: userResponse,
           taskType: test.content?.task_type,
         });

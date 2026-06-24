@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 const { all, get, run } = require('../db/database');
 const auth = require('../middleware/auth');
 const { buildMockExamFeedback } = require('../utils/mockExamFeedback');
-const { evaluateWriting } = require('../services/writingFeedback');
+const { evaluateWriting, buildWritingPrompt } = require('../services/writingFeedback');
 
 const router = express.Router();
 
@@ -122,10 +122,19 @@ router.get('/:id', auth, async (req, res) => {
     );
     const mockFeedback = buildMockExamFeedback(writingSubmissions, speakingSubmissions);
     if (attempt.writing_feedback) {
+      const tasks = Array.isArray(attempt.writing_feedback.tasks) ? attempt.writing_feedback.tasks : [];
       mockFeedback.writing = {
         ...mockFeedback.writing,
         ...attempt.writing_feedback,
-        submissions: mockFeedback.writing.submissions,
+        submissions: mockFeedback.writing.submissions.map((submission, index) => {
+          const taskFeedback = tasks[index];
+          if (!taskFeedback) return submission;
+          return {
+            ...submission,
+            estimated_band: taskFeedback.overall_band,
+            ai_feedback: taskFeedback,
+          };
+        }),
       };
     }
 
@@ -223,7 +232,7 @@ router.post('/:id/complete', auth, async (req, res) => {
     const band = speakingBand ? Math.max(toBandScore(correct, total), speakingBand) : toBandScore(correct, total);
     let writingFeedback = null;
     const writingAnswers = await all(
-      `SELECT a.user_answer AS essay_text, q.question_text, p.title AS passage_title
+      `SELECT a.user_answer AS essay_text, q.question_text, qg.instruction, p.title AS passage_title
        FROM answers a
        JOIN questions q ON q.id = a.question_id
        JOIN question_groups qg ON qg.id = q.group_id
@@ -235,30 +244,54 @@ router.post('/:id/complete', auth, async (req, res) => {
 
     if (writingAnswers.length && process.env.AI_API_KEY) {
       try {
-        const evaluated = await Promise.all(writingAnswers.map(answer => evaluateWriting({
-          prompt: answer.question_text,
-          essay: answer.essay_text,
-          taskType: answer.passage_title?.toLowerCase().includes('task 1') ? 'task1' : 'task2',
-        })));
+        const evaluated = await Promise.all(writingAnswers.map(async (answer) => {
+          const taskType = answer.passage_title?.toLowerCase().includes('task 1') ? 'task1' : 'task2';
+          const feedback = await evaluateWriting({
+            prompt: buildWritingPrompt({
+              title: answer.passage_title,
+              instruction: answer.instruction,
+              questionText: answer.question_text,
+              taskType,
+            }),
+            essay: answer.essay_text,
+            taskType,
+          });
+          return feedback ? { answer, feedback, taskType } : null;
+        }));
         const available = evaluated.filter(Boolean);
         if (available.length) {
           const overall = Math.round(
-            (available.reduce((sum, item) => sum + item.overall, 0) / available.length) * 2
+            (available.reduce((sum, item) => sum + item.feedback.overall, 0) / available.length) * 2
           ) / 2;
           writingFeedback = {
             section: 'writing',
             overall_band: overall,
             criteria: available.length === 1
-              ? available[0].criteria
-              : available[0].criteria.map((criterion, index) => ({
+              ? available[0].feedback.criteria
+              : available[0].feedback.criteria.map((criterion, index) => ({
                 ...criterion,
                 band: Math.round(
-                  (available.reduce((sum, item) => sum + item.criteria[index].band, 0) / available.length) * 2
+                  (available.reduce((sum, item) => sum + item.feedback.criteria[index].band, 0) / available.length) * 2
                 ) / 2,
+                feedback: available
+                  .map((item, taskIndex) => `Task ${taskIndex + 1}: ${item.feedback.criteria[index].feedback}`)
+                  .join('\n\n'),
               })),
-            strengths: [...new Set(available.flatMap(item => item.strengths))].slice(0, 4),
-            improvements: [...new Set(available.flatMap(item => item.improvements))].slice(0, 4),
-            summary: available.map((item, index) => `Task ${index + 1}: ${item.summary}`).join(' '),
+            strengths: [...new Set(available.flatMap(item => item.feedback.strengths))].slice(0, 4),
+            improvements: [...new Set(available.flatMap(item => item.feedback.improvements))].slice(0, 4),
+            summary: available.map((item, index) => `Task ${index + 1}: ${item.feedback.summary}`).join(' '),
+            tasks: available.map((item, index) => ({
+              task_number: index + 1,
+              task_type: item.taskType,
+              question_text: item.answer.question_text,
+              instruction: item.answer.instruction,
+              overall_band: item.feedback.overall,
+              criteria: item.feedback.criteria,
+              strengths: item.feedback.strengths,
+              improvements: item.feedback.improvements,
+              summary: item.feedback.summary,
+              word_count: item.answer.essay_text.trim().split(/\s+/).filter(Boolean).length,
+            })),
           };
           console.log(`[writing-feedback] AI assessment used for mock attempt ${req.params.id} (${available.length} task${available.length === 1 ? '' : 's'}, model: ${process.env.AI_MODEL || 'gpt-4.1-mini'})`);
         } else {

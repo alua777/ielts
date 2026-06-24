@@ -33,7 +33,7 @@ function normalizeFeedback(value) {
     return {
       label,
       band: clampBand(source.band),
-      feedback: String(source.feedback || 'Review this criterion and add more precise development.').trim(),
+      feedback: String(source.feedback || 'Review this criterion and add more precise development. Include what is working, what is limiting the band, and one concrete next step.').trim(),
     };
   });
   const average = criteria.reduce((sum, item) => sum + item.band, 0) / criteria.length;
@@ -68,12 +68,23 @@ function getMessageContent(data) {
 function buildPrompt({ prompt, essay, taskType }) {
   return [
     `IELTS writing task type: ${taskType || 'unknown'}`,
-    'Task prompt:',
+    'Writing question and instructions:',
     prompt || 'No task prompt was supplied. Evaluate how clearly and fully the response develops its apparent purpose.',
     '',
     'Candidate response:',
     essay,
   ].join('\n');
+}
+
+function buildWritingPrompt({ title, description, prompt, instruction, questionText, taskType }) {
+  return [
+    title ? `Title: ${title}` : '',
+    taskType ? `Task type: ${taskType}` : '',
+    description ? `Topic/context: ${description}` : '',
+    prompt ? `Prompt: ${prompt}` : '',
+    instruction ? `Instructions: ${instruction}` : '',
+    questionText ? `Question: ${questionText}` : '',
+  ].filter(Boolean).join('\n');
 }
 
 async function evaluateWriting({ prompt, essay, taskType }) {
@@ -100,21 +111,22 @@ async function evaluateWriting({ prompt, essay, taskType }) {
         messages: [
           {
             role: 'system',
-            content: `You are a careful IELTS Writing examiner. Assess only the supplied response.
+            content: `You are a careful IELTS Writing examiner. Assess only the supplied candidate response against the supplied writing question and instructions.
+Use the task prompt as the source of topic, purpose, and required response type. If the essay is about children, technology, cities, charts, maps, or any other topic, judge relevance against that exact topic instead of giving generic feedback.
 Return valid JSON with this exact shape:
 {
   "overall_band": 6.5,
   "criteria": [
-    {"label":"Task Achievement","band":6.5,"feedback":"Specific evidence-based feedback."},
-    {"label":"Coherence and Cohesion","band":6.5,"feedback":"Specific evidence-based feedback."},
-    {"label":"Grammar","band":6.5,"feedback":"Specific evidence-based feedback."},
-    {"label":"Lexical Resource / Vocabulary","band":6.5,"feedback":"Specific evidence-based feedback."}
+    {"label":"Task Achievement","band":6.5,"feedback":"3-5 sentences. Explain exactly what is relevant or missing for this prompt, whether the position/overview is clear, how well ideas or data are developed, and one specific improvement."},
+    {"label":"Coherence and Cohesion","band":6.5,"feedback":"3-5 sentences. Explain paragraphing, logical flow, referencing, linking, repetition, and one specific improvement."},
+    {"label":"Grammar","band":6.5,"feedback":"3-5 sentences. Explain sentence range, accuracy, recurring error types, punctuation/control, and one specific improvement."},
+    {"label":"Lexical Resource / Vocabulary","band":6.5,"feedback":"3-5 sentences. Explain vocabulary precision for this topic, collocations, repetition, word-form/spelling issues, and one specific improvement."}
   ],
-  "strengths": ["Two or three concise strengths"],
-  "improvements": ["Two or three concrete next steps"],
-  "summary": "A concise overall assessment."
+  "strengths": ["Three specific strengths tied to the response"],
+  "improvements": ["Three concrete next steps tied to the response"],
+  "summary": "4-6 sentences giving a detailed overall assessment with the main reason for the band."
 }
-Use IELTS bands from 0 to 9 in 0.5 increments. Do not claim this is an official score.`,
+Use IELTS bands from 0 to 9 in 0.5 increments. Be direct and specific, but supportive. Do not claim this is an official score.`,
           },
           { role: 'user', content: buildPrompt({ prompt, essay, taskType }) },
         ],
@@ -132,4 +144,4 @@ Use IELTS bands from 0 to 9 in 0.5 increments. Do not claim this is an official 
   }
 }
 
-module.exports = { evaluateWriting, normalizeFeedback };
+module.exports = { evaluateWriting, normalizeFeedback, buildWritingPrompt };
