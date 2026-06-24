@@ -4,6 +4,11 @@
   font-family: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+  color: #0f172a;
+  background:
+    radial-gradient(circle at 76% 8%, rgba(139, 92, 246, 0.22), transparent 30rem),
+    radial-gradient(circle at 14% 28%, rgba(196, 181, 253, 0.24), transparent 26rem),
+    linear-gradient(135deg, #fffefe 0%, #fffbff 44%, #fbf8ff 100%);
 }
 
 html,
@@ -13,6 +18,123 @@ body,
   min-height: 100%;
   margin: 0;
   font-family: inherit;
+}
+
+body {
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 78% 10%, rgba(124, 58, 237, 0.24), transparent 30rem),
+    radial-gradient(circle at 10% 22%, rgba(216, 180, 254, 0.22), transparent 24rem),
+    linear-gradient(135deg, #fffefe 0%, #fffbff 48%, #fbf8ff 100%);
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 9999px;
+  filter: blur(58px);
+  opacity: 0.72;
+}
+
+body::before {
+  width: min(42vw, 680px);
+  height: min(42vw, 680px);
+  right: -12vw;
+  top: -12vh;
+  background:
+    radial-gradient(circle at 45% 45%, rgba(124, 58, 237, 0.5), transparent 58%),
+    radial-gradient(circle at 64% 58%, rgba(192, 132, 252, 0.36), transparent 68%);
+}
+
+body::after {
+  width: min(34vw, 520px);
+  height: min(34vw, 520px);
+  left: -14vw;
+  bottom: 8vh;
+  background:
+    radial-gradient(circle at 48% 44%, rgba(167, 139, 250, 0.34), transparent 62%),
+    radial-gradient(circle at 62% 54%, rgba(244, 114, 182, 0.16), transparent 70%);
+}
+
+#root {
+  isolation: isolate;
+}
+
+/* Soft IELTS Buddy theme layer: warm white base, purple haze, pastel surfaces. */
+.bg-\[\#f7f9fd\],
+.bg-slate-50 {
+  background-color: transparent !important;
+  background-image:
+    radial-gradient(circle at 86% 12%, rgba(139, 92, 246, 0.14), transparent 28rem),
+    radial-gradient(circle at 12% 72%, rgba(221, 214, 254, 0.22), transparent 24rem),
+    linear-gradient(135deg, rgba(255, 254, 253, 0.94), rgba(253, 248, 255, 0.9)) !important;
+}
+
+.bg-white {
+  background-color: rgba(255, 255, 255, 0.84) !important;
+}
+
+.bg-slate-100 {
+  background-color: rgba(245, 239, 255, 0.86) !important;
+}
+
+.bg-slate-200 {
+  background-color: rgba(231, 222, 255, 0.9) !important;
+}
+
+.border-slate-100,
+.border-slate-200,
+.border-slate-300,
+.border-violet-100,
+.border-violet-200,
+.border-purple-100,
+.border-purple-200,
+.border-gray-100,
+.border-gray-200 {
+  border-color: rgba(139, 92, 246, 0.11) !important;
+}
+
+[class*="border-slate"][class*="bg-white"],
+[class*="border-violet"][class*="bg-white"],
+[class*="border-purple"][class*="bg-white"],
+[class*="border-gray"][class*="bg-white"] {
+  border-color: rgba(139, 92, 246, 0.08) !important;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(253, 248, 255, 0.76)) !important;
+  box-shadow: 0 18px 48px rgba(88, 28, 135, 0.07), 0 2px 10px rgba(15, 23, 42, 0.035) !important;
+}
+
+main [class*="border-slate"][class*="bg-white"]:nth-of-type(3n + 1),
+main [class*="border-violet"][class*="bg-white"]:nth-of-type(3n + 1) {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(245, 243, 255, 0.76)) !important;
+}
+
+main [class*="border-slate"][class*="bg-white"]:nth-of-type(3n + 2),
+main [class*="border-violet"][class*="bg-white"]:nth-of-type(3n + 2) {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(239, 246, 255, 0.74)) !important;
+}
+
+main [class*="border-slate"][class*="bg-white"]:nth-of-type(3n) {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(240, 253, 250, 0.7)) !important;
+}
+
+input,
+textarea,
+select {
+  background-color: rgba(255, 255, 255, 0.76);
+  border-color: rgba(139, 92, 246, 0.14) !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.11);
 }
 
 *,
