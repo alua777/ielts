@@ -42,7 +42,7 @@ export default function History() {
   const handleLogout = () => { logout(); navigate('/login'); };
 
   return (
-    <div className="flex min-h-dvh bg-[#f7f9fd] text-slate-900">
+    <div className="app-shell flex min-h-dvh text-slate-900">
       <DashboardSidebar onStartExam={() => startExam('reading')} onLogout={handleLogout} onNavigate={navigate} />
       <main className="min-w-0 flex-1 px-4 pb-6 pt-20 sm:px-6 lg:px-8 lg:py-7">
         <div className="mx-auto max-w-[1280px]">
@@ -60,7 +60,7 @@ export default function History() {
                   const value = data.stats[key];
                   const display = key === 'practice_minutes' ? `${value || 0} min` : key.includes('band') ? (value == null ? '--' : Number(value).toFixed(1)) : value || 0;
                   return (
-                    <article key={key} className="rounded-lg border border-slate-200 bg-white p-4">
+                    <article key={key} className="soft-card rounded-lg p-4">
                       <span className={`flex h-9 w-9 items-center justify-center rounded-lg ${tone}`}>{createElement(Icon, { size: 18 })}</span>
                       <p className="mt-3 text-[22px] font-extrabold text-slate-950 sm:text-[28px]">{display}</p>
                       <p className="mt-1 text-[12px] font-medium text-slate-500">{label}</p>

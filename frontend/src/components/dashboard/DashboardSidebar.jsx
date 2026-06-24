@@ -77,15 +77,15 @@ export default function DashboardSidebar({ onStartExam, onLogout, onNavigate }) 
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-40 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 lg:hidden">
+      <header className="soft-card fixed inset-x-0 top-0 z-40 flex h-16 items-center justify-between px-4 lg:hidden">
         <Logo />
-        <button type="button" onClick={() => setOpen(true)} aria-label="Open navigation" className="flex h-11 w-11 items-center justify-center rounded-lg border border-slate-200 text-slate-700">
+        <button type="button" onClick={() => setOpen(true)} aria-label="Open navigation" className="flex h-11 w-11 items-center justify-center rounded-lg bg-white/70 text-slate-700 shadow-sm">
           <Menu size={21} />
         </button>
       </header>
 
       {open && <button type="button" aria-label="Close navigation" onClick={() => setOpen(false)} className="fixed inset-0 z-40 bg-slate-950/35 lg:hidden" />}
-      <aside className={`fixed inset-y-0 left-0 z-50 flex w-[280px] flex-col border-r border-slate-200 bg-white px-3 py-4 transition-transform lg:static lg:z-auto lg:h-dvh lg:w-[250px] lg:shrink-0 lg:translate-x-0 ${
+      <aside className={`soft-card fixed inset-y-0 left-0 z-50 flex w-[280px] flex-col px-3 py-4 transition-transform lg:static lg:z-auto lg:h-dvh lg:w-[250px] lg:shrink-0 lg:translate-x-0 ${
         open ? 'translate-x-0' : '-translate-x-full'
       }`}>
         <button type="button" onClick={() => setOpen(false)} aria-label="Close navigation" className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-lg text-slate-500 lg:hidden">

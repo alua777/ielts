@@ -24,7 +24,7 @@ function FeedbackRow({ icon, iconClass, title, score, children, bordered }) {
 
 export default function LatestFeedbackCard({ averageBand }) {
   return (
-    <DashboardPanel title="Latest Feedback" className="h-[232px]">
+    <DashboardPanel title="Latest Feedback" className="pastel-card-blue h-[232px]">
       <div className="space-y-3">
         <FeedbackRow icon={PenLine} iconClass="bg-blue-50 text-blue-600" title="Writing Task 2" score={averageBand ? averageBand.toFixed(1) : '-'}>
           Improve coherence and support ideas with relevant examples.

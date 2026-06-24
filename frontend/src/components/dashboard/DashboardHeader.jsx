@@ -43,13 +43,13 @@ export default function DashboardHeader({
         <button
           type="button"
           aria-label="Notifications"
-          className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-sm hover:bg-slate-50"
+          className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-white/70 text-slate-500 shadow-sm hover:bg-white"
         >
           <Bell size={18} />
           <span className="absolute right-2.5 top-2.5 h-1.5 w-1.5 rounded-full bg-red-500" />
         </button>
 
-        <div className="relative border-l border-slate-200 pl-3" ref={menuRef}>
+        <div className="relative pl-3" ref={menuRef}>
           <button
             type="button"
             onClick={() => setOpen(value => !value)}
@@ -67,8 +67,8 @@ export default function DashboardHeader({
           </button>
 
           {open && (
-            <div className="absolute right-0 top-[calc(100%+8px)] z-50 w-52 rounded-xl border border-slate-200 bg-white p-2 shadow-[0_14px_34px_rgba(15,23,42,0.14)]">
-              <div className="border-b border-slate-100 px-3 py-2">
+            <div className="soft-card absolute right-0 top-[calc(100%+8px)] z-50 w-52 rounded-xl p-2">
+              <div className="px-3 py-2">
                 <p className="truncate text-[14px] font-semibold text-slate-900">{user?.name}</p>
                 <p className="truncate text-[12px] text-slate-400">{user?.email}</p>
               </div>

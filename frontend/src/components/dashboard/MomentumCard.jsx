@@ -11,7 +11,7 @@ const ITEMS = [
 export default function MomentumCard({ streak, completed, weekly }) {
   const values = { streak, completed, weekly };
   return (
-    <DashboardPanel title="Momentum" className="h-[170px]">
+    <DashboardPanel title="Momentum" className="pastel-card-violet h-[170px]">
       <div className="flex justify-between px-5">
         {ITEMS.map(({ key, label, icon, color }) => (
           <div key={key} className="min-w-0">

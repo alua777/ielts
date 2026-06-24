@@ -88,7 +88,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex min-h-dvh bg-[#f7f9fd] text-slate-900 lg:h-dvh lg:overflow-hidden">
+    <div className="app-shell flex min-h-dvh text-slate-900 lg:h-dvh lg:overflow-hidden">
       <DashboardSidebar
         onStartExam={() => startExam('reading')}
         onLogout={handleLogout}

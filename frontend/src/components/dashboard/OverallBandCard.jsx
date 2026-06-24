@@ -23,10 +23,10 @@ function BandGauge({ band }) {
 
 export default function OverallBandCard({ averageBand, targetBand }) {
   return (
-    <DashboardPanel title="Overall Band Score" className="h-[270px]">
+    <DashboardPanel title="Overall Band Score" className="pastel-card-violet h-[270px]">
       <div className="flex items-center justify-center gap-8">
         <BandGauge band={averageBand} />
-        <div className="min-w-0 flex-1 text-end border-l border-slate-200 pl-5">
+        <div className="min-w-0 flex-1 text-end pl-5">
           <p className="text-[14px] text-slate-500">Target</p>
           <p className="mt-1 text-[36px] font-bold leading-none text-violet-600">{targetBand.toFixed(1)}</p>
           <p className="mt-6 text-[14px] leading-5 text-slate-700">

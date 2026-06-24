@@ -3,7 +3,7 @@ import { createElement } from 'react';
 
 function ListBlock({ title, items, icon, tone }) {
   return (
-    <section className="border border-slate-200 bg-white p-5" style={{ borderRadius: 8 }}>
+    <section className="soft-card p-5" style={{ borderRadius: 8 }}>
       <h2 className="flex items-center gap-2 text-[16px] font-bold text-slate-950">
         {createElement(icon, { size: 18, className: tone })} {title}
       </h2>
@@ -21,8 +21,8 @@ function ListBlock({ title, items, icon, tone }) {
 export default function FeedbackReport({ feedback }) {
   return (
     <div className="space-y-4">
-      <section className="grid gap-5 border border-violet-100 bg-white p-6 lg:grid-cols-[220px_1fr]" style={{ borderRadius: 8 }}>
-        <div className="flex flex-col justify-center border-b border-slate-100 pb-5 lg:border-b-0 lg:border-r lg:pb-0">
+      <section className="soft-card grid gap-5 p-6 lg:grid-cols-[220px_1fr]" style={{ borderRadius: 8 }}>
+        <div className="flex flex-col justify-center pb-5 lg:pb-0">
           <p className="text-[12px] font-bold uppercase text-violet-600">Estimated Band</p>
           <p className="mt-2 text-[56px] font-extrabold leading-none text-slate-950">{Number(feedback.overall_band).toFixed(1)}</p>
           <p className="mt-3 text-[13px] font-semibold text-slate-500">AI Feedback Preview</p>
@@ -38,7 +38,7 @@ export default function FeedbackReport({ feedback }) {
 
       <section className="grid gap-3 md:grid-cols-2">
         {feedback.criteria.map(item => (
-          <article key={item.label} className="border border-slate-200 bg-white p-5" style={{ borderRadius: 8 }}>
+          <article key={item.label} className="soft-card p-5" style={{ borderRadius: 8 }}>
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-[15px] font-bold text-slate-950">{item.label}</h2>
               <span className="text-[22px] font-extrabold text-violet-700">{Number(item.band).toFixed(1)}</span>

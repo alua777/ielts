@@ -36,8 +36,8 @@ export default function BandTrendCard({ values }) {
   return (
     <DashboardPanel
       title="Band Score Trend"
-      className="h-[232px]"
-      action={<span className="rounded-lg border border-slate-200 px-2 py-1 text-[12px] font-medium text-slate-500">30 Days</span>}
+      className="pastel-card-violet h-[232px]"
+      action={<span className="rounded-lg bg-white/70 px-2 py-1 text-[12px] font-medium text-slate-500 shadow-sm">30 Days</span>}
     >
       <TrendChart values={values} />
     </DashboardPanel>

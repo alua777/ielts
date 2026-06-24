@@ -11,7 +11,7 @@ const AREAS = [
 
 export default function WeakAreasCard() {
   return (
-    <DashboardPanel title="Weak Areas" className="h-[232px]">
+    <DashboardPanel title="Weak Areas" className="pastel-card-peach h-[232px]">
       <div className="space-y-1.5">
         {AREAS.map(([label, icon, color, bg]) => (
           <div key={label} className="flex h-8 min-w-0 items-center gap-3">

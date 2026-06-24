@@ -12,7 +12,7 @@ export default function TodayPlanCard({ weeklyDone, onContinue }) {
   return (
     <DashboardPanel
       title="Today's Plan"
-      className="h-[270px]"
+      className="pastel-card-blue h-[270px]"
       action={
         <span className="whitespace-nowrap rounded-full bg-blue-50 px-2.5 py-1 text-[13px] font-semibold text-blue-600">
           {Math.min(weeklyDone, 3)}/3 completed

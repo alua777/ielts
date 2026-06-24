@@ -138,7 +138,7 @@ export default function Results() {
   }
 
   return (
-    <div className="flex min-h-dvh bg-[#f7f9fd] text-slate-900 lg:h-dvh lg:overflow-hidden">
+    <div className="app-shell flex min-h-dvh text-slate-900 lg:h-dvh lg:overflow-hidden">
       <DashboardSidebar
         activeLabel="Results"
         onStartExam={() => startExam('reading')}
@@ -167,7 +167,7 @@ export default function Results() {
               <button
                 type="button"
                 onClick={() => window.print()}
-                className="flex min-h-11 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-[12px] font-bold text-violet-700 sm:px-5 sm:text-[13px]"
+                className="flex min-h-11 items-center justify-center gap-2 rounded-lg bg-white/75 px-3 text-[12px] font-bold text-violet-700 shadow-sm sm:px-5 sm:text-[13px]"
               >
                 <Download size={16} /> Download Report
               </button>

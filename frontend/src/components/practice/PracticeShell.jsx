@@ -14,7 +14,7 @@ export default function PracticeShell({ children, activeLabel = 'Practice' }) {
   };
 
   return (
-    <div className="flex min-h-dvh bg-[#f7f9fd] text-slate-900">
+    <div className="app-shell flex min-h-dvh text-slate-900">
       <DashboardSidebar
         activeLabel={activeLabel}
         onStartExam={() => startExam('reading')}

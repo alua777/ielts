@@ -6,7 +6,7 @@ export default function MockHistoryCard({ completed, onViewAll }) {
   return (
     <DashboardPanel
       title="Mock Test History"
-      className="h-[170px]"
+      className="pastel-card-mint h-[170px]"
       action={<button onClick={onViewAll} className="text-[12px] font-medium text-violet-600">View all</button>}
     >
       <div className="space-y-1">

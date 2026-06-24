@@ -5,7 +5,7 @@ export default function SkillsBreakdownCard({ skills }) {
   return (
     <DashboardPanel
       title="Skills Breakdown"
-      className="h-[270px]"
+      className="pastel-card-mint h-[270px]"
       action={<button className="whitespace-nowrap text-[14px] font-medium text-violet-600">View details</button>}
     >
       <div className="space-y-3">

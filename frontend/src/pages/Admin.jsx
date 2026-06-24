@@ -40,7 +40,7 @@ const blankForm = () => ({
 
 function StatCard({ label, value, hint }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="soft-card rounded-xl p-5">
       <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-slate-400">{label}</p>
       <p className="mt-3 text-[32px] font-extrabold leading-none text-slate-950">{value}</p>
       {hint ? <p className="mt-2 text-[13px] font-medium text-slate-500">{hint}</p> : null}
@@ -60,7 +60,7 @@ function AdminTabs({ activeTab, onChange }) {
             type="button"
             onClick={() => onChange(tab.id)}
             className={`flex min-h-11 items-center gap-2 rounded-lg px-4 text-[14px] font-bold transition ${
-              active ? 'bg-violet-600 text-white shadow-lg shadow-violet-200' : 'border border-slate-200 bg-white text-slate-600 hover:text-slate-950'
+              active ? 'bg-violet-600 text-white shadow-lg shadow-violet-200' : 'soft-card text-slate-600 hover:text-slate-950'
             }`}
           >
             <Icon size={17} />
@@ -211,7 +211,7 @@ export default function Admin() {
   };
 
   return (
-    <div className="flex min-h-dvh bg-[#f7f9fd] text-slate-950 lg:h-dvh lg:overflow-hidden">
+    <div className="app-shell flex min-h-dvh text-slate-950 lg:h-dvh lg:overflow-hidden">
       <DashboardSidebar onStartExam={() => startExam('reading')} onLogout={handleLogout} onNavigate={navigate} />
 
       <main className="min-w-0 flex-1 overflow-y-auto px-4 pb-8 pt-20 sm:px-6 lg:px-6 lg:py-5">
@@ -239,10 +239,10 @@ export default function Admin() {
                     value={search}
                     onChange={event => setSearch(event.target.value)}
                     placeholder="Search tests or users"
-                    className="h-11 w-full rounded-lg border border-slate-200 bg-white pl-10 pr-3 text-[14px] font-medium outline-none ring-violet-200 focus:border-violet-400 focus:ring-4"
+                    className="h-11 w-full rounded-lg border border-violet-100 bg-white/75 pl-10 pr-3 text-[14px] font-medium outline-none ring-violet-200 focus:border-violet-400 focus:ring-4"
                   />
                 </label>
-                <button type="button" onClick={loadAdminData} className="flex h-11 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 text-[14px] font-bold text-slate-600">
+                <button type="button" onClick={loadAdminData} className="soft-card flex h-11 items-center justify-center gap-2 rounded-lg px-4 text-[14px] font-bold text-slate-600">
                   <RefreshCcw size={16} />
                   Refresh
                 </button>
@@ -250,7 +250,7 @@ export default function Admin() {
 
               {error ? <div className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-[14px] font-semibold text-red-700">{error}</div> : null}
               {loading ? (
-                <div className="mt-8 flex min-h-[320px] items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500">
+                <div className="soft-card mt-8 flex min-h-[320px] items-center justify-center rounded-xl text-slate-500">
                   <Loader2 size={24} className="animate-spin" />
                 </div>
               ) : activeTab === 'analytics' ? (
@@ -264,7 +264,7 @@ export default function Admin() {
                     <StatCard label="AI feedback" value={summary?.summary?.ai_feedback || 0} />
                   </div>
                   <div className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
-                    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <div className="soft-card rounded-xl p-5">
                       <h2 className="text-[16px] font-extrabold">Most difficult question types</h2>
                       <div className="mt-4 space-y-3">
                         {(summary?.difficult_question_types || []).length ? summary.difficult_question_types.map(item => (
@@ -280,7 +280,7 @@ export default function Admin() {
                         )) : <p className="text-[14px] font-medium text-slate-500">No graded question data yet.</p>}
                       </div>
                     </div>
-                    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <div className="soft-card rounded-xl p-5">
                       <h2 className="text-[16px] font-extrabold">Content mix</h2>
                       <div className="mt-4 space-y-3">
                         {['reading', 'listening', 'writing', 'speaking'].map(section => (
@@ -294,7 +294,7 @@ export default function Admin() {
                   </div>
                 </section>
               ) : activeTab === 'users' ? (
-                <section className="mt-5 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                <section className="soft-card mt-5 rounded-xl p-4">
                   <div className="overflow-x-auto">
                     <table className="min-w-full text-left text-[14px]">
                       <thead className="text-[12px] font-bold uppercase tracking-[0.08em] text-slate-400">
@@ -326,11 +326,11 @@ export default function Admin() {
                             <td className="px-3 py-4 text-slate-500">{account.last_activity ? new Date(account.last_activity).toLocaleDateString('en-GB') : 'Never'}</td>
                             <td className="px-3 py-4">
                               <div className="flex justify-end gap-2">
-                                <button type="button" onClick={() => updateUser(account.id, { status: account.status === 'banned' ? 'active' : 'banned' })} className="flex h-9 items-center gap-1 rounded-lg border border-slate-200 px-3 text-[13px] font-bold text-slate-600">
+                                <button type="button" onClick={() => updateUser(account.id, { status: account.status === 'banned' ? 'active' : 'banned' })} className="flex h-9 items-center gap-1 rounded-lg bg-white/70 px-3 text-[13px] font-bold text-slate-600 shadow-sm">
                                   <Ban size={14} />
                                   {account.status === 'banned' ? 'Unban' : 'Ban'}
                                 </button>
-                                <button type="button" onClick={() => resetAttempts(account.id)} className="h-9 rounded-lg border border-slate-200 px-3 text-[13px] font-bold text-slate-600">Reset</button>
+                                <button type="button" onClick={() => resetAttempts(account.id)} className="h-9 rounded-lg bg-white/70 px-3 text-[13px] font-bold text-slate-600 shadow-sm">Reset</button>
                                 <button type="button" onClick={() => deleteUser(account.id)} className="flex h-9 items-center gap-1 rounded-lg border border-red-100 bg-red-50 px-3 text-[13px] font-bold text-red-600">
                                   <Trash2 size={14} />
                                   Delete
@@ -345,7 +345,7 @@ export default function Admin() {
                 </section>
               ) : (
                 <section className="mt-5 grid gap-4 xl:grid-cols-[430px_minmax(0,1fr)]">
-                  <form onSubmit={saveTest} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                  <form onSubmit={saveTest} className="soft-card rounded-xl p-5">
                     <div className="flex items-center justify-between">
                       <h2 className="text-[16px] font-extrabold">{editingId ? 'Edit test' : 'Create test'}</h2>
                       {editingId ? <button type="button" onClick={resetForm} className="text-[13px] font-bold text-violet-600">New test</button> : null}
@@ -379,7 +379,7 @@ export default function Admin() {
 
                   <div className="grid gap-3">
                     {tests.map(test => (
-                      <article key={test.id} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                      <article key={test.id} className="soft-card rounded-xl p-4">
                         <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                           <div>
                             <div className="flex flex-wrap items-center gap-2">
@@ -393,8 +393,8 @@ export default function Admin() {
                             <p className="mt-2 max-w-3xl text-[14px] text-slate-600">{test.description || 'No description yet.'}</p>
                           </div>
                           <div className="flex flex-wrap gap-2">
-                            <button type="button" onClick={() => editTest(test)} className="flex h-9 items-center gap-1 rounded-lg border border-slate-200 px-3 text-[13px] font-bold text-slate-600"><Pencil size={14} /> Edit</button>
-                            <button type="button" onClick={() => togglePublish(test)} className="flex h-9 items-center gap-1 rounded-lg border border-slate-200 px-3 text-[13px] font-bold text-slate-600"><CheckCircle2 size={14} /> {test.published ? 'Unpublish' : 'Publish'}</button>
+                            <button type="button" onClick={() => editTest(test)} className="flex h-9 items-center gap-1 rounded-lg bg-white/70 px-3 text-[13px] font-bold text-slate-600 shadow-sm"><Pencil size={14} /> Edit</button>
+                            <button type="button" onClick={() => togglePublish(test)} className="flex h-9 items-center gap-1 rounded-lg bg-white/70 px-3 text-[13px] font-bold text-slate-600 shadow-sm"><CheckCircle2 size={14} /> {test.published ? 'Unpublish' : 'Publish'}</button>
                             <button type="button" onClick={() => deleteTest(test.id)} className="flex h-9 items-center gap-1 rounded-lg border border-red-100 bg-red-50 px-3 text-[13px] font-bold text-red-600"><Trash2 size={14} /> Delete</button>
                           </div>
                         </div>

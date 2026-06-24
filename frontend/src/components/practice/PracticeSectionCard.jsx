@@ -6,7 +6,7 @@ export default function PracticeSectionCard({ section, onOpen }) {
     <button
       type="button"
       onClick={onOpen}
-      className="group flex min-h-52 flex-col border border-slate-200 bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-violet-200 hover:shadow-md"
+      className="soft-card group flex min-h-52 flex-col p-5 text-left transition hover:-translate-y-0.5"
       style={{ borderRadius: 8 }}
     >
       <span className={`flex h-11 w-11 items-center justify-center rounded-lg ${section.iconClass}`}>

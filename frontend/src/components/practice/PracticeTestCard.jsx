@@ -8,7 +8,7 @@ const difficultyClass = {
 
 export default function PracticeTestCard({ test, onOpen }) {
   return (
-    <article className="flex min-h-64 flex-col border border-slate-200 bg-white p-5 shadow-sm" style={{ borderRadius: 8 }}>
+    <article className="soft-card flex min-h-64 flex-col p-5" style={{ borderRadius: 8 }}>
       <div className="flex items-start justify-between gap-3">
         <span className={`rounded-md px-2 py-1 text-[12px] font-semibold ${difficultyClass[test.difficulty]}`}>
           {test.difficulty}
