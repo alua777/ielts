@@ -5,10 +5,7 @@
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   color: #0f172a;
-  background:
-    radial-gradient(circle at 78% 8%, rgba(139, 92, 246, 0.1), transparent 30rem),
-    radial-gradient(circle at 16% 30%, rgba(196, 181, 253, 0.1), transparent 26rem),
-    linear-gradient(135deg, #fffefe 0%, #fffcff 52%, #fdfaff 100%);
+  background: #f7f9fd;
 }
 
 html,
@@ -22,21 +19,12 @@ body,
 
 body {
   overflow-x: hidden;
-  background:
-    radial-gradient(circle at 78% 10%, rgba(124, 58, 237, 0.1), transparent 30rem),
-    radial-gradient(circle at 10% 22%, rgba(216, 180, 254, 0.1), transparent 24rem),
-    linear-gradient(135deg, #fffefe 0%, #fffcff 52%, #fdfaff 100%);
+  background: #f7f9fd;
 }
 
 body::before,
 body::after {
-  content: "";
-  position: fixed;
-  z-index: 0;
-  pointer-events: none;
-  border-radius: 9999px;
-  filter: blur(78px);
-  opacity: 0.38;
+  content: none;
 }
 
 body::before {
@@ -65,18 +53,7 @@ body::after {
 }
 
 #root::before {
-  content: "";
-  position: fixed;
-  inset: auto -10vw 10vh auto;
-  z-index: 0;
-  width: min(46vw, 760px);
-  height: min(46vw, 760px);
-  pointer-events: none;
-  border-radius: 9999px;
-  background:
-    radial-gradient(circle at 48% 48%, rgba(109, 40, 217, 0.14), transparent 54%),
-    radial-gradient(circle at 58% 58%, rgba(216, 180, 254, 0.18), transparent 68%);
-  filter: blur(90px);
+  content: none;
 }
 
 #root > * {
@@ -84,14 +61,11 @@ body::after {
   z-index: 1;
 }
 
-/* Soft IELTS Buddy theme layer: warm white base, purple haze, pastel surfaces. */
+/* Soft IELTS Buddy theme layer. */
 .bg-\[\#f7f9fd\],
 .bg-slate-50 {
-  background-color: transparent !important;
-  background-image:
-    radial-gradient(circle at 84% 8%, rgba(139, 92, 246, 0.1), transparent 30rem),
-    radial-gradient(circle at 8% 76%, rgba(221, 214, 254, 0.12), transparent 24rem),
-    linear-gradient(135deg, rgba(255, 254, 253, 0.96), rgba(254, 251, 255, 0.94)) !important;
+  background-color: #f7f9fd !important;
+  background-image: none !important;
 }
 
 .bg-white {
@@ -162,47 +136,22 @@ select:focus {
 .app-shell {
   position: relative;
   isolation: isolate;
-  background:
-    radial-gradient(circle at 78% 2%, rgba(124, 58, 237, 0.14), transparent 32rem),
-    radial-gradient(circle at 8% 88%, rgba(192, 132, 252, 0.12), transparent 28rem),
-    radial-gradient(circle at 52% 42%, rgba(236, 233, 255, 0.38), transparent 42rem),
-    linear-gradient(135deg, #fffefe 0%, #fffaff 50%, #fefbff 100%) !important;
+  background: #f7f9fd !important;
 }
 
 .app-shell::before {
-  content: "";
-  position: fixed;
-  right: -220px;
-  top: -170px;
-  z-index: -1;
-  width: 760px;
-  height: 760px;
-  pointer-events: none;
-  border-radius: 9999px;
-  background: rgba(124, 58, 237, 0.14);
-  filter: blur(96px);
+  content: none;
 }
 
 .app-shell::after {
-  content: "";
-  position: fixed;
-  left: 28%;
-  bottom: -260px;
-  z-index: -1;
-  width: 720px;
-  height: 720px;
-  pointer-events: none;
-  border-radius: 9999px;
-  background: rgba(216, 180, 254, 0.14);
-  filter: blur(108px);
+  content: none;
 }
 
 .soft-card {
   border: 0 !important;
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(253, 250, 255, 0.88)) !important;
+  background: rgba(255, 255, 255, 0.94) !important;
   box-shadow: 0 14px 36px rgba(88, 28, 135, 0.065), 0 2px 8px rgba(15, 23, 42, 0.028) !important;
-  backdrop-filter: blur(10px);
+  backdrop-filter: none;
 }
 
 .pastel-card-violet {
